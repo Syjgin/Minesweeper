@@ -6,6 +6,7 @@ using SevenBoldPencil.EasyEvents;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using View;
 
 namespace Bootstrap
 {
@@ -34,15 +35,17 @@ namespace Bootstrap
         private PoolSet CreatePrefabPoolSet()
         {
             var poolSet = new PoolSet();
-            var cellPool = new ObjectPool<SingleMineUi>(_prefabLocator.GetPrefabByType(PrefabType.Cell), 512);
+            var cellPool = new ObjectPool<SingleMineView>(_prefabLocator.GetPrefabByType(PrefabType.Cell), 512);
             var createWindowPool = new ObjectPool<CreateLevelWindow>(_prefabLocator.GetPrefabByType(PrefabType.CreateWindow), 1);
             var pauseWindowPool = new ObjectPool<PauseWindow>(_prefabLocator.GetPrefabByType(PrefabType.PauseWindow), 1);
             var uiPool = new ObjectPool<MainUi>(_prefabLocator.GetPrefabByType(PrefabType.MainUi), 1, _uiRoot.transform);
+            var fieldPool = new ObjectPool<Field>(_prefabLocator.GetPrefabByType(PrefabType.Field), 1);
             
             poolSet.RegisterPool(PrefabType.Cell, cellPool);
             poolSet.RegisterPool(PrefabType.CreateWindow, createWindowPool);
             poolSet.RegisterPool(PrefabType.PauseWindow, pauseWindowPool);
             poolSet.RegisterPool(PrefabType.MainUi, uiPool);
+            poolSet.RegisterPool(PrefabType.Field, fieldPool);
             return poolSet;
         }
     }
