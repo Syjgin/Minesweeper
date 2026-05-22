@@ -11,6 +11,7 @@ namespace Config
 		CreateWindow = 2,
         MainUi = 3,
         PauseWindow = 4,
-        Field = 5
+        Field = 5,
+        Camera = 6
     }
 }
