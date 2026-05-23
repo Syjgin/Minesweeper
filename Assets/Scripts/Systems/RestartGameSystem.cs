@@ -73,7 +73,7 @@ namespace Systems
             
             var cellSize = _sharedData.ReadOnlySettings.CellSize;
             var fieldOffset = CalculateFieldOffset(gridSize, cellSize);
-            field.transform.position = fieldOffset;
+            field.Init(gridSize, _sharedData.ReadOnlySettings.CellSize, fieldOffset);
             
             for (var i = 0; i < gridSize; i++)
             {
@@ -107,7 +107,7 @@ namespace Systems
             foreach (var entity in _cameraFilter)
             {
                 ref var camera = ref _ecsCameraPool.Get(entity);
-                camera.Init(new Vector3(0, 0, _sharedData.ReadOnlySettings.InitialCameraHeight));
+                camera.Init(Vector2.zero, _sharedData.ReadOnlySettings.InitialCameraOrthoSize);
                 _dirtyPool.Add(entity);
                 break;
             }
@@ -115,8 +115,9 @@ namespace Systems
 
         private Vector3 CalculateFieldOffset(int gridSize, float cellSize)
         {
+            var multiplier = gridSize * 0.5f - 0.5f;
             var totalSize = gridSize * cellSize;
-            var halfSize = totalSize * 0.5f;
+            var halfSize = totalSize * multiplier;
             return new Vector3(halfSize, halfSize, 0);
         }
     }

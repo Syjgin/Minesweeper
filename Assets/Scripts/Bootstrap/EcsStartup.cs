@@ -33,7 +33,7 @@ namespace Bootstrap
             var poolSet = CreatePrefabPoolSet();
             var sharedData = new SharedData(eventsBus, poolSet, _playerInput,
                 new StartNewGameEvent(_initialData.GridSize, _initialData.MinesCount),
-                new ReadOnlySettings(_initialData.InitialCameraHeight, _initialData.CellSize, _initialData.MinCameraZ, _initialData.MaxCameraZ));
+                new ReadOnlySettings(_initialData.InitialCameraOrthoSize, _initialData.CellSize, _initialData.MinCameraOrthoSize, _initialData.MaxCameraOrthoSize));
             _updateRunSystems = new EcsSystems(_world, sharedData);
             _updateRunSystems.Add(new LoadInitialDataSystem())
                 .Add(new RestartGameSystem())

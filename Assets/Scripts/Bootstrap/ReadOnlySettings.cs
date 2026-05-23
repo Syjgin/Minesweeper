@@ -2,17 +2,17 @@ namespace Bootstrap
 {
     public struct ReadOnlySettings
     {
-        public readonly float InitialCameraHeight;
+        public readonly float InitialCameraOrthoSize;
         public readonly float CellSize;
-        public readonly float MinCameraZ;
-        public readonly float MaxCameraZ;
+        public readonly float MinCameraOrhtoSize;
+        public readonly float MaxCameraOrthoSize;
 
-        public ReadOnlySettings(float initialCameraHeight, float cellSize, float minCameraZ, float maxCameraZ)
+        public ReadOnlySettings(float initialCameraOrthoSize, float cellSize, float minCameraOrhtoSize, float maxCameraOrthoSize)
         {
-            InitialCameraHeight = initialCameraHeight;
+            InitialCameraOrthoSize = initialCameraOrthoSize;
             CellSize = cellSize;
-            MinCameraZ = minCameraZ;
-            MaxCameraZ = maxCameraZ;
+            MinCameraOrhtoSize = minCameraOrhtoSize;
+            MaxCameraOrthoSize = maxCameraOrthoSize;
         }
     }
 }

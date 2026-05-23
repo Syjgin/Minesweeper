@@ -3,6 +3,7 @@ using Components;
 using Config;
 using Leopotam.EcsLite;
 using Pools;
+using UnityEngine;
 using View;
 
 namespace Systems.Camera
@@ -31,7 +32,8 @@ namespace Systems.Camera
                     return;
                 if(!cameraPool.TryGetObjectByEntity(entity, out var cameraObject))
                     return;
-                cameraObject.transform.position = cameraComponent.Position;
+                cameraObject.transform.position = new Vector3(cameraComponent.Position.x, cameraComponent.Position.y, Constants.DefaultCameraZ);
+                cameraObject.Camera.orthographicSize = cameraComponent.OrthoSize;
                 _dirtyPool.Del(entity);
             }
         }

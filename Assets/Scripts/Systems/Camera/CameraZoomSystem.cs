@@ -12,8 +12,8 @@ namespace Systems.Camera
             foreach (var entity in CameraFilter)
             {
                 ref var cameraComponent = ref CameraPool.Get(entity);
-                var newValue = cameraComponent.Position.z + amount.y;
-                if(newValue > ReadOnlySettings.MaxCameraZ || newValue < ReadOnlySettings.MinCameraZ)
+                var newValue = cameraComponent.OrthoSize + amount.y;
+                if(newValue > ReadOnlySettings.MaxCameraOrthoSize || newValue < ReadOnlySettings.MinCameraOrhtoSize)
                     break;
                 cameraComponent.Zoom(amount.y);
                 DirtyPool.Add(entity);
