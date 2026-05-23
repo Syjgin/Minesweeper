@@ -47,13 +47,13 @@ namespace Systems
         {
             if(!_eventsBus.HasEventSingleton<StartNewGameEvent>(out var startNewGameEvent))
                 return;
-            MoveCameraToInitialPosition();
-            FillField(startNewGameEvent.GridSize, startNewGameEvent.MinesCount);
+            var mainCamera = MoveCameraToInitialPosition();
+            FillField(startNewGameEvent.GridSize, startNewGameEvent.MinesCount, mainCamera);
         }
 
-        private void FillField(int gridSize, int minesCountNewValue)
+        private void FillField(int gridSize, int minesCountNewValue, UnityEngine.Camera camera)
         {
-            if(!_poolSet.TryGetPool<Field>(PrefabType.Field, out var fieldObjectPool))
+            if(!_poolSet.TryGetPool<FieldView>(PrefabType.Field, out var fieldObjectPool))
                 return;
             if(!_poolSet.TryGetPool<CellView>(PrefabType.Cell, out var cellViewObjectPool))
                 return;
@@ -73,7 +73,10 @@ namespace Systems
             
             var cellSize = _sharedData.ReadOnlySettings.CellSize;
             var fieldOffset = CalculateFieldOffset(gridSize, cellSize);
-            field.Init(gridSize, _sharedData.ReadOnlySettings.CellSize, fieldOffset);
+
+            
+            
+            field.Init(gridSize, _sharedData.ReadOnlySettings.CellSize, fieldOffset, camera);
             
             for (var i = 0; i < gridSize; i++)
             {
@@ -102,20 +105,27 @@ namespace Systems
             }
         }
 
-        private void MoveCameraToInitialPosition()
+        private UnityEngine.Camera MoveCameraToInitialPosition()
         {
             foreach (var entity in _cameraFilter)
             {
                 ref var camera = ref _ecsCameraPool.Get(entity);
                 camera.Init(Vector2.zero, _sharedData.ReadOnlySettings.InitialCameraOrthoSize);
                 _dirtyPool.Add(entity);
+                if (_poolSet.TryGetPool<MainCamera>(PrefabType.Camera, out var cameraObjectPool) &&
+                    cameraObjectPool.TryGetObjectByEntity(entity, out var cameraObject))
+                {
+                    return cameraObject.Camera;
+                }
                 break;
             }
+            return null;
         }
 
         private Vector3 CalculateFieldOffset(int gridSize, float cellSize)
         {
-            var multiplier = gridSize * 0.5f - 0.5f;
+            var additionalCoef = gridSize % 2 == 0 ? -0.5f : 0f;
+            var multiplier = gridSize * 0.5f + additionalCoef;
             var totalSize = gridSize * cellSize;
             var halfSize = totalSize * multiplier;
             return new Vector3(halfSize, halfSize, 0);

@@ -59,7 +59,7 @@ namespace Bootstrap
                 new ObjectPool<PauseWindow>(_prefabLocator.GetPrefabByType(PrefabType.PauseWindow), 1);
             var uiPool =
                 new ObjectPool<MainUi>(_prefabLocator.GetPrefabByType(PrefabType.MainUi), 1, _uiRoot.transform);
-            var fieldPool = new ObjectPool<Field>(_prefabLocator.GetPrefabByType(PrefabType.Field), 1);
+            var fieldPool = new ObjectPool<FieldView>(_prefabLocator.GetPrefabByType(PrefabType.Field), 1);
             var cameraPool = new ObjectPool<MainCamera>(_prefabLocator.GetPrefabByType(PrefabType.Camera), 1);
 
             poolSet.RegisterPool(PrefabType.Cell, cellPool);

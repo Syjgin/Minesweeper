@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b95607ba8243de8385fe82091f3095, type: 3}
+  m_Name: PrefabLocator
+  m_EditorClassIdentifier: Assembly-CSharp::Config.PrefabLocator
+  _entries:
+  - Type: 1
+    Prefab: {fileID: 102432446673438045, guid: 6a7104edde7d1523990d1e007f2d8485, type: 3}
+  - Type: 5
+    Prefab: {fileID: 2279605386205168313, guid: b52794c4c1ce0363b9f88f4c73f39040, type: 3}
+  - Type: 6
+    Prefab: {fileID: 8364508343402800755, guid: c0d19b33b664b9f2e9a8d9ccc49bb7be, type: 3}

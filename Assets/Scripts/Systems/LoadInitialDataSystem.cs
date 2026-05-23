@@ -33,7 +33,8 @@ namespace Systems
                 return;
             var cameraEntity = _world.NewEntity();
             _ecsCameraPool.Add(cameraEntity);
-            cameraPool.CreateObject(cameraEntity);
+            var mainCamera = cameraPool.CreateObject(cameraEntity);
+            _sharedData.PlayerInput.camera = mainCamera.Camera;
         }
     }
 }
