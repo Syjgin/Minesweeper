@@ -52,23 +52,34 @@ namespace Bootstrap
         private PoolSet CreatePrefabPoolSet()
         {
             var poolSet = new PoolSet();
-            var cellPool = new ObjectPool<CellView>(_prefabLocator.GetPrefabByType(PrefabType.Cell), 512);
-            var createWindowPool =
-                new ObjectPool<CreateLevelWindow>(_prefabLocator.GetPrefabByType(PrefabType.CreateWindow), 1);
-            var pauseWindowPool =
-                new ObjectPool<PauseWindow>(_prefabLocator.GetPrefabByType(PrefabType.PauseWindow), 1);
-            var uiPool =
-                new ObjectPool<MainUi>(_prefabLocator.GetPrefabByType(PrefabType.MainUi), 1, _uiRoot.transform);
-            var fieldPool = new ObjectPool<FieldView>(_prefabLocator.GetPrefabByType(PrefabType.Field), 1);
-            var cameraPool = new ObjectPool<MainCamera>(_prefabLocator.GetPrefabByType(PrefabType.Camera), 1);
 
-            poolSet.RegisterPool(PrefabType.Cell, cellPool);
-            poolSet.RegisterPool(PrefabType.CreateWindow, createWindowPool);
-            poolSet.RegisterPool(PrefabType.PauseWindow, pauseWindowPool);
-            poolSet.RegisterPool(PrefabType.MainUi, uiPool);
-            poolSet.RegisterPool(PrefabType.Field, fieldPool);
-            poolSet.RegisterPool(PrefabType.Camera, cameraPool);
+            poolSet.RegisterPool(new ObjectPool<CellView>(_prefabLocator, PrefabType.Cell, 512));
+            poolSet.RegisterPool(new ObjectPool<NewGameWindow>(_prefabLocator, PrefabType.NewGameWindow, 1));
+            poolSet.RegisterPool(new ObjectPool<PauseWindow>(_prefabLocator, PrefabType.PauseWindow, 1));
+            poolSet.RegisterPool(new ObjectPool<MainUi>(_prefabLocator, PrefabType.MainUi, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<FieldView>(_prefabLocator, PrefabType.Field, 1));
+            poolSet.RegisterPool(new ObjectPool<MainCamera>(_prefabLocator, PrefabType.Camera, 1));
             return poolSet;
+        }
+        
+        private void Update()
+        {
+            _updateRunSystems?.Run();
+        }
+
+        void OnDestroy()
+        {
+            if (_updateRunSystems != null)
+            {
+                _updateRunSystems.Destroy();
+                _updateRunSystems = null;
+            }
+            
+            if (_world != null)
+            {
+                _world.Destroy();
+                _world = null;
+            }
         }
     }
 }

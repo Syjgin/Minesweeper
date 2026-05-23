@@ -91,3 +91,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abcdef1234567890abcdef1234567890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::View.Field
+  _collider: {fileID: 6574901834647611894}

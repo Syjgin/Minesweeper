@@ -76,7 +76,7 @@ namespace Systems
 
             
             
-            field.Init(gridSize, _sharedData.ReadOnlySettings.CellSize, fieldOffset, camera);
+            field.Init(gridSize, _sharedData.ReadOnlySettings.CellSize, fieldOffset.Item1, fieldOffset.Item2, camera);
             
             for (var i = 0; i < gridSize; i++)
             {
@@ -94,14 +94,14 @@ namespace Systems
                 foreach (var entity in _mineCountFilter)
                 {
                     ref var mineCount = ref _mineCountPool.Get(entity);
-                    mineCount.Init(minesCountNewValue, fieldOffset.x);
+                    mineCount.Init(minesCountNewValue, fieldOffset.Item1.x);
                     break;
                 }
             }
             else
             {
                 var mineCount = _world.NewEntity();
-                _mineCountPool.Add(mineCount).Init(minesCountNewValue, fieldOffset.x);
+                _mineCountPool.Add(mineCount).Init(minesCountNewValue, fieldOffset.Item1.x);
             }
         }
 
@@ -122,13 +122,13 @@ namespace Systems
             return null;
         }
 
-        private Vector3 CalculateFieldOffset(int gridSize, float cellSize)
+        private (Vector3, float) CalculateFieldOffset(int gridSize, float cellSize)
         {
             var additionalCoef = gridSize % 2 == 0 ? -0.5f : 0f;
             var multiplier = gridSize * 0.5f + additionalCoef;
             var totalSize = gridSize * cellSize;
             var halfSize = totalSize * multiplier;
-            return new Vector3(halfSize, halfSize, 0);
+            return (new Vector3(halfSize, halfSize, 0), multiplier);
         }
     }
 }

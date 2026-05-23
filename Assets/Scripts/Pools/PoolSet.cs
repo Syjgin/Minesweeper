@@ -8,9 +8,9 @@ namespace Pools
     {
         private readonly Dictionary<PrefabType, IPool> _pools = new();
 
-        public void RegisterPool(PrefabType prefabType, IPool pool)
+        public void RegisterPool(IPool pool)
         {
-            _pools[prefabType] = pool;
+            _pools[pool.PrefabType] = pool;
         }
         
         public bool TryGetPool<T>(PrefabType prefabType, out ObjectPool<T> pool) where T : Behaviour

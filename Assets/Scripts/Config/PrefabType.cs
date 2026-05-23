@@ -8,7 +8,7 @@ namespace Config
     {
         None = 0,
         Cell = 1,
-		CreateWindow = 2,
+		NewGameWindow = 2,
         MainUi = 3,
         PauseWindow = 4,
         Field = 5,

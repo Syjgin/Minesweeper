@@ -23,7 +23,7 @@ namespace Systems.Camera
             var playerInput = sharedData.PlayerInput;
             var world = systems.GetWorld();
             ReadOnlySettings = sharedData.ReadOnlySettings;
-            CameraFilter = world.Filter<CameraComponent>().Inc<CameraComponent>().End();
+            CameraFilter = world.Filter<CameraComponent>().End();
             CameraPool = world.GetPool<CameraComponent>();
             DirtyPool = world.GetPool<Dirty>();
             FieldCharacteristicsPool = world.GetPool<FieldCharacteristics>();
