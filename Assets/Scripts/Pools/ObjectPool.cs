@@ -6,41 +6,43 @@ namespace Pools
     public class ObjectPool<T> : IPool  where T : Behaviour
     {
         private readonly GameObject _prefab;
-        private readonly int _initialSize;
-        private readonly List<T> _pooledObjects;
         private readonly Dictionary<int, T> _activeObjects;
         private readonly Dictionary<int, int> _activeEntities;
+        private readonly UnityEngine.Pool.ObjectPool<T> _pool;
         private readonly Transform _parent;
 
         public ObjectPool(GameObject prefab, int initialSize = 10, Transform parent = null)
         {
             _prefab = prefab;
-            _initialSize = initialSize;
             _parent = parent;
-            _pooledObjects = new List<T>();
+            _pool = new UnityEngine.Pool.ObjectPool<T>(CreateObject, OnGetObject, OnReleaseObject, OnDestroyObject, true, initialSize);
             _activeObjects = new Dictionary<int, T>();
             _activeEntities = new Dictionary<int, int>();
-            InitializePool();
+        }
+
+        private void OnDestroyObject(T obj)
+        {
+            Object.Destroy(obj);   
+        }
+
+        private void OnReleaseObject(T obj)
+        {
+            obj.gameObject.SetActive(false);
+        }
+
+        private void OnGetObject(T obj)
+        {
+            obj.gameObject.SetActive(false);
+        }
+
+        private T CreateObject()
+        {
+            return  Object.Instantiate(_prefab, _parent).GetComponent<T>();
         }
         
-        public T CreateObject(int entity = -1)
+        public T CreateObject(int entity)
         {
-            T obj;
-
-            if (_pooledObjects.Count > 0)
-            {
-                int lastIndex = _pooledObjects.Count - 1;
-                obj = _pooledObjects[lastIndex];
-                _pooledObjects.RemoveAt(lastIndex);
-            }
-            else
-            {
-                CreatePooledObject();
-                int lastIndex = _pooledObjects.Count - 1;
-                obj = _pooledObjects[lastIndex];
-                _pooledObjects.RemoveAt(lastIndex);
-            }
-
+            T obj = _pool.Get();
             obj.gameObject.SetActive(true);
             _activeObjects.Add(entity, obj);
             _activeEntities.Add(obj.GetInstanceID(), entity);
@@ -54,7 +56,7 @@ namespace Pools
                 obj.gameObject.SetActive(false);
                 _activeObjects.Remove(entity);
                 _activeEntities.Remove(obj.GetInstanceID());
-                _pooledObjects.Add(obj);
+                _pool.Release(obj);
             }
         }
 
@@ -66,23 +68,6 @@ namespace Pools
         public bool TryGetEntityByInstanceID(int instanceID, out int result)
         {
             return _activeEntities.TryGetValue(instanceID, out result);
-        }
-
-        private void InitializePool()
-        {
-            for (int i = 0; i < _initialSize; i++)
-            {
-                CreatePooledObject();
-            }
-        }
-
-        private void CreatePooledObject()
-        {
-            GameObject instance = null;
-            instance = _parent != null ? Object.Instantiate(_prefab, _parent) : Object.Instantiate(_prefab);
-            instance.SetActive(false);
-            T component = instance.GetComponent<T>();
-            _pooledObjects.Add(component);
         }
     }
 }
