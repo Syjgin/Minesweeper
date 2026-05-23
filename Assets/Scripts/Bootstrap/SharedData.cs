@@ -11,15 +11,16 @@ namespace Bootstrap
         public readonly PoolSet PoolSet;
         public readonly PlayerInput PlayerInput;
         public readonly StartNewGameEvent InitialData;
-        public readonly float InitialCameraHeight;
+        public readonly ReadOnlySettings ReadOnlySettings;
 
-        public SharedData(EventsBus eventsBus, PoolSet poolSet, PlayerInput playerInput, StartNewGameEvent startNewGameEvent, float initialCameraHeight)
+        public SharedData(EventsBus eventsBus, PoolSet poolSet, PlayerInput playerInput,
+            StartNewGameEvent startNewGameEvent, ReadOnlySettings readOnlySettings)
         {
             EventsBus = eventsBus;
             PoolSet = poolSet;
             PlayerInput = playerInput;
             InitialData = startNewGameEvent;
-            InitialCameraHeight = initialCameraHeight;
+            ReadOnlySettings = readOnlySettings;
         }
     }
 }

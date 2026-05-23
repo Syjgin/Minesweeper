@@ -19,26 +19,6 @@ namespace Pools
             _activeObjects = new Dictionary<int, T>();
             _activeEntities = new Dictionary<int, int>();
         }
-
-        private void OnDestroyObject(T obj)
-        {
-            Object.Destroy(obj);   
-        }
-
-        private void OnReleaseObject(T obj)
-        {
-            obj.gameObject.SetActive(false);
-        }
-
-        private void OnGetObject(T obj)
-        {
-            obj.gameObject.SetActive(false);
-        }
-
-        private T CreateObject()
-        {
-            return  Object.Instantiate(_prefab, _parent).GetComponent<T>();
-        }
         
         public T CreateObject(int entity)
         {
@@ -68,6 +48,26 @@ namespace Pools
         public bool TryGetEntityByInstanceID(int instanceID, out int result)
         {
             return _activeEntities.TryGetValue(instanceID, out result);
+        }
+        
+        private void OnDestroyObject(T obj)
+        {
+            Object.Destroy(obj);   
+        }
+
+        private void OnReleaseObject(T obj)
+        {
+            obj.gameObject.SetActive(false);
+        }
+
+        private void OnGetObject(T obj)
+        {
+            obj.gameObject.SetActive(false);
+        }
+
+        private T CreateObject()
+        {
+            return  Object.Instantiate(_prefab, _parent).GetComponent<T>();
         }
     }
 }

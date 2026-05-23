@@ -18,29 +18,29 @@ namespace Systems
         private EcsPool<CellComponent> _ecsCellPool;
         private EcsPool<FieldComponent> _ecsFieldPool;
         private EcsPool<CameraComponent> _ecsCameraPool;
-        private EcsPool<TotalMinesCount> _mineCountPool;
+        private EcsPool<FieldCharacteristics> _mineCountPool;
         private EcsPool<Dirty> _dirtyPool;
         private EcsFilter _cameraFilter;
         private EcsFilter _fieldFilter;
         private EcsFilter _cellsFilter;
         private EcsFilter _mineCountFilter;
-        private float _initialCameraHeight;
+        private SharedData _sharedData;
         
         public void Init(IEcsSystems systems)
         {
             _world = systems.GetWorld();
-            _eventsBus = systems.GetShared<SharedData>().EventsBus;
+            _sharedData = systems.GetShared<SharedData>();
+            _eventsBus = _sharedData.EventsBus;
             _ecsCellPool = _world.GetPool<CellComponent>();
             _ecsFieldPool = _world.GetPool<FieldComponent>();
             _ecsCameraPool = _world.GetPool<CameraComponent>();
-            _mineCountPool = _world.GetPool<TotalMinesCount>();
+            _mineCountPool = _world.GetPool<FieldCharacteristics>();
             _dirtyPool = _world.GetPool<Dirty>();
             _poolSet = systems.GetShared<SharedData>().PoolSet;
             _cameraFilter = _world.Filter<CameraComponent>().End();
             _fieldFilter = _world.Filter<FieldComponent>().End();
             _cellsFilter = _world.Filter<CellComponent>().End();
-            _mineCountFilter = _world.Filter<TotalMinesCount>().End();
-            _initialCameraHeight = systems.GetShared<SharedData>().InitialCameraHeight;
+            _mineCountFilter = _world.Filter<FieldCharacteristics>().End();
         }
 
         public void Run(IEcsSystems systems)
@@ -70,7 +70,11 @@ namespace Systems
             var fieldEntity = _world.NewEntity();
             _ecsFieldPool.Add(fieldEntity);
             var field = fieldObjectPool.CreateObject(fieldEntity);
-            field.transform.position = Vector3.zero;
+            
+            var cellSize = _sharedData.ReadOnlySettings.CellSize;
+            var fieldOffset = CalculateFieldOffset(gridSize, cellSize);
+            field.transform.position = fieldOffset;
+            
             for (var i = 0; i < gridSize; i++)
             {
                 for (var j = 0; j < gridSize; j++)
@@ -87,14 +91,14 @@ namespace Systems
                 foreach (var entity in _mineCountFilter)
                 {
                     ref var mineCount = ref _mineCountPool.Get(entity);
-                    mineCount.Init(minesCountNewValue);
+                    mineCount.Init(minesCountNewValue, fieldOffset.x);
                     break;
                 }
             }
             else
             {
                 var mineCount = _world.NewEntity();
-                _mineCountPool.Add(mineCount).Init(minesCountNewValue);
+                _mineCountPool.Add(mineCount).Init(minesCountNewValue, fieldOffset.x);
             }
         }
 
@@ -103,10 +107,17 @@ namespace Systems
             foreach (var entity in _cameraFilter)
             {
                 ref var camera = ref _ecsCameraPool.Get(entity);
-                camera.Update(new Vector3(0, 0, _initialCameraHeight));
+                camera.Init(new Vector3(0, 0, _sharedData.ReadOnlySettings.InitialCameraHeight));
                 _dirtyPool.Add(entity);
                 break;
             }
+        }
+
+        private Vector3 CalculateFieldOffset(int gridSize, float cellSize)
+        {
+            var totalSize = gridSize * cellSize;
+            var halfSize = totalSize * 0.5f;
+            return new Vector3(halfSize, halfSize, 0);
         }
     }
 }
