@@ -10,6 +10,6 @@ namespace UI
         [field: SerializeField] public Button RestartButton { get; private set; }
         [field: SerializeField] public Button PauseButton { get; private set; }
         [field: SerializeField] public TMP_Text Timer { get; private set; }
-        [field: SerializeField] public TMP_Text MinesCount { get; private set; }
+        [field: SerializeField] public TMP_Text FlagsCount { get; private set; }
     }
 }

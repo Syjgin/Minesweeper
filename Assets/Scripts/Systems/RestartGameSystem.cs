@@ -15,7 +15,8 @@ namespace Systems
         private EcsWorld _world;
         private EventsBus _eventsBus;
         private PoolSet _poolSet;
-        private EcsPool<CellComponent> _ecsCellPool;
+        private EcsPool<CellCoordinateComponent> _ecsCellPool;
+        private EcsPool<CellVisualStateComponent> _ecsCellVisualStatePool;
         private EcsPool<CameraComponent> _ecsCameraPool;
         private EcsPool<FieldComponent> _fieldPool;
         private EcsPool<DirtyComponent> _dirtyPool;
@@ -25,22 +26,27 @@ namespace Systems
         private EcsFilter _fieldFilter;
         private EcsFilter _currentGameCharacteristicsFilter;
         private SharedData _sharedData;
+        private EcsFilter _gameStartedFilter;
+        private EcsPool<GameStartedComponent> _gameStartedPool;
         
         public void Init(IEcsSystems systems)
         {
             _world = systems.GetWorld();
             _sharedData = systems.GetShared<SharedData>();
             _eventsBus = _sharedData.EventsBus;
-            _ecsCellPool = _world.GetPool<CellComponent>();
+            _ecsCellPool = _world.GetPool<CellCoordinateComponent>();
             _ecsCameraPool = _world.GetPool<CameraComponent>();
             _fieldPool = _world.GetPool<FieldComponent>();
             _dirtyPool = _world.GetPool<DirtyComponent>();
             _poolSet = systems.GetShared<SharedData>().PoolSet;
             _cameraFilter = _world.Filter<CameraComponent>().End();
-            _cellsFilter = _world.Filter<CellComponent>().End();
+            _cellsFilter = _world.Filter<CellCoordinateComponent>().End();
             _fieldFilter = _world.Filter<FieldComponent>().End();
             _currentGameCharacteristicsFilter = _world.Filter<SavedParamsComponent>().End();
             _ecsCharacteristicPool = _world.GetPool<SavedParamsComponent>();
+            _ecsCellVisualStatePool = _world.GetPool<CellVisualStateComponent>();
+            _gameStartedFilter = _world.Filter<GameStartedComponent>().End();
+            _gameStartedPool = _world.GetPool<GameStartedComponent>();
         }
 
         public void Run(IEcsSystems systems)
@@ -68,10 +74,14 @@ namespace Systems
                 return;
             if(!_poolSet.TryGetPool<CellView>(PrefabType.Cell, out var cellViewObjectPool))
                 return;
+            foreach (var entity in _gameStartedFilter)
+            {
+                _gameStartedPool.Del(entity);
+            }
             foreach (var cellEntity in _cellsFilter)
             {
                 cellViewObjectPool.ReturnObject(cellEntity);
-                _ecsCellPool.Del(cellEntity);
+                _world.DelEntity(cellEntity);
             }
             foreach (var oldField in _fieldFilter)
             {
@@ -81,7 +91,7 @@ namespace Systems
                     oldFieldObject.OnCellClickAction -= OnCellClick;
                 }
                 fieldObjectPool.ReturnObject(oldField);
-                _fieldPool.Del(oldField);
+                _world.DelEntity(oldField);
             }
             var fieldOffset = CalculateFieldOffset(gridSize);
             
@@ -99,6 +109,8 @@ namespace Systems
                 {
                     var cellEntity = _world.NewEntity();
                     _ecsCellPool.Add(cellEntity).Init(i, j);
+                    _ecsCellVisualStatePool.Add(cellEntity).UpdateVisual(CellVisual.Closed);
+                    _dirtyPool.Add(cellEntity);
                     var cellObject = cellViewObjectPool.CreateObject(cellEntity);
                     field.AddCell(cellObject);
                 }

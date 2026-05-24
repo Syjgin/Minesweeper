@@ -51,6 +51,7 @@ MonoBehaviour:
   <ClosedSprite>k__BackingField: {fileID: 21300000, guid: 448e1b597f4498d82a33b8a3d2198760, type: 3}
   <OpenedSprite>k__BackingField: {fileID: 21300000, guid: 6e1ae395072699f528cb47bcdeb97928, type: 3}
   <MineSprite>k__BackingField: {fileID: 21300000, guid: 8cb2a0e2b96441ab7bb6ce4d4baca9ae, type: 3}
+  <FlagSprite>k__BackingField: {fileID: 21300000, guid: 0b55dcb964cffe34d82436c432a846e1, type: 3}
 --- !u!1 &6276919429651181537
 GameObject:
   m_ObjectHideFlags: 0

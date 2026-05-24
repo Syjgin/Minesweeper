@@ -6,6 +6,7 @@ using Pools;
 using SevenBoldPencil.EasyEvents;
 using Systems;
 using Systems.Camera;
+using Systems.Cells;
 using Systems.UI;
 using UI;
 using UnityEngine;
@@ -41,11 +42,13 @@ namespace Bootstrap
                 .Add(new RestartGameSystem())
                 .Add(new CameraDragSystem())
                 .Add(new CameraZoomSystem())
+                .Add(new UpdateCellVisualSystem())
                 .Add(new ApplyMoveCameraSystem())
                 .Add(new WindowStateChangeSystem())
                 .Add(new MainUiInputSystem())
                 .Add(new NewGameWindowInputSystem())
                 .Add(new PauseWindowInputSystem())
+                .Add(new CellClickHandleSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
 #endif

@@ -10,5 +10,6 @@ namespace View
         [field: SerializeField] public Sprite ClosedSprite { get; private set; }
         [field: SerializeField] public Sprite OpenedSprite { get; private set; }
         [field: SerializeField] public Sprite MineSprite { get; private set; }
+        [field: SerializeField] public Sprite FlagSprite { get; private set; }
     }
 }

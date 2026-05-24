@@ -78,7 +78,6 @@ namespace View
 
             if (x >= 0 && x < _gridSize.x && y >= 0 && y < _gridSize.y)
             {
-                Debug.Log($"{x}, {y}");
                 OnCellClickAction?.Invoke(new Vector2Int(x, y));
             }
         }
