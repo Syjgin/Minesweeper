@@ -52,7 +52,6 @@ namespace Systems.Camera
                     break;
                 if(Mathf.Abs(cameraComponent.Position.y + resultDelta.y) > maxOffset)
                     break;
-                Debug.Log($"drag {cameraComponent.Position} with delta {resultDelta}, max offset: {maxOffset}");
                 cameraComponent.Drag(resultDelta);
                 _dirtyPool.Add(entity);
                 break;

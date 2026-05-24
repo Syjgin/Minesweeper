@@ -43,6 +43,7 @@ namespace Bootstrap
                 .Add(new CameraZoomSystem())
                 .Add(new ApplyMoveCameraSystem())
                 .Add(new WindowStateChangeSystem())
+                .Add(new MainUiInputSystem())
                 .Add(new NewGameWindowInputSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())

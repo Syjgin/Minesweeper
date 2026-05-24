@@ -19,9 +19,11 @@ namespace Systems
         private EcsPool<CameraComponent> _ecsCameraPool;
         private EcsPool<FieldComponent> _fieldPool;
         private EcsPool<DirtyComponent> _dirtyPool;
+        private EcsPool<CurrentGameCharacteristicsComponent> _ecsCharacteristicPool;
         private EcsFilter _cameraFilter;
         private EcsFilter _cellsFilter;
         private EcsFilter _fieldFilter;
+        private EcsFilter _currentGameCharacteristicsFilter;
         private SharedData _sharedData;
         
         public void Init(IEcsSystems systems)
@@ -37,12 +39,25 @@ namespace Systems
             _cameraFilter = _world.Filter<CameraComponent>().End();
             _cellsFilter = _world.Filter<CellComponent>().End();
             _fieldFilter = _world.Filter<FieldComponent>().End();
+            _currentGameCharacteristicsFilter = _world.Filter<CurrentGameCharacteristicsComponent>().End();
+            _ecsCharacteristicPool = _world.GetPool<CurrentGameCharacteristicsComponent>();
         }
 
         public void Run(IEcsSystems systems)
         {
             if(!_eventsBus.HasEventSingleton<StartNewGameEvent>(out var startNewGameEvent))
                 return;
+            if (_currentGameCharacteristicsFilter.GetEntitiesCount() == 0)
+            {
+                var characteristicsEntity = _world.NewEntity();
+                _ecsCharacteristicPool.Add(characteristicsEntity);
+            }
+
+            foreach (var entity in _currentGameCharacteristicsFilter)
+            {
+                ref var characteristics = ref _ecsCharacteristicPool.Get(entity);
+                characteristics.Init(startNewGameEvent.GridSize, startNewGameEvent.MinesCount);
+            }
             var mainCamera = MoveCameraToInitialPosition(startNewGameEvent.GridSize);
             FillField(startNewGameEvent.GridSize, startNewGameEvent.MinesCount, mainCamera);
         }

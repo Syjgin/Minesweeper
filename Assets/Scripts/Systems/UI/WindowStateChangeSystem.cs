@@ -50,7 +50,7 @@ namespace Systems.UI
                         break;
                     case PrefabType.PauseWindow:
                     {
-                        targetWindow = TryGetWindow<PauseWindow>(PrefabType.NewGameWindow, entity);
+                        targetWindow = TryGetWindow<PauseWindow>(PrefabType.PauseWindow, entity);
                     }
                         break;
                     default:

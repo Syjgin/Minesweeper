@@ -17,6 +17,7 @@ namespace Systems
         private EcsWorld _world;
         private SharedData _sharedData;
         private EcsPool<WindowComponent> _ecsWindowPool;
+        private EcsPool<MainUiComponent> _ecsMainUiPool;
 
         public void Init(IEcsSystems systems)
         {
@@ -25,6 +26,7 @@ namespace Systems
             _world = systems.GetWorld();
             _ecsCameraPool = _world.GetPool<CameraComponent>();
             _ecsWindowPool = _world.GetPool<WindowComponent>();
+            _ecsMainUiPool = _world.GetPool<MainUiComponent>();
             _poolSet = _sharedData.PoolSet;
             CreateCamera();
             CreateMainUI();
@@ -49,15 +51,6 @@ namespace Systems
             var window = CreateWindow<NewGameWindow>(PrefabType.NewGameWindow, WindowType.NewGame);
             window.LevelSizeInput.text = _sharedData.InitialData.GridSize.ToString();
             window.MinesCountInput.text = _sharedData.InitialData.MinesCount.ToString();
-            var windows = _world.Filter<WindowComponent>().End();
-            foreach (var window1 in windows)
-            {
-                ref var windowComponent = ref _ecsWindowPool.Get(window1);
-                if (windowComponent.WindowType == WindowType.None)
-                {
-                    Debug.LogError($"Window has not been created");
-                }
-            }
         }
 
         private void CreatePauseWindow()
@@ -76,6 +69,11 @@ namespace Systems
 
         private void CreateMainUI()
         {
+            var mainUiEntity = _world.NewEntity();
+            if (!_poolSet.TryGetPool<MainUi>(PrefabType.MainUi, out var mainUiPool))
+                return;
+            _ecsMainUiPool.Add(mainUiEntity);
+            mainUiPool.CreateObject(mainUiEntity);
         }
     }
 }
