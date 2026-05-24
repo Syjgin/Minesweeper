@@ -47,7 +47,7 @@ namespace Systems
         {
             if(!_eventsBus.HasEventSingleton<StartNewGameEvent>(out var startNewGameEvent))
                 return;
-            var mainCamera = MoveCameraToInitialPosition();
+            var mainCamera = MoveCameraToInitialPosition(startNewGameEvent.GridSize);
             FillField(startNewGameEvent.GridSize, startNewGameEvent.MinesCount, mainCamera);
         }
 
@@ -64,19 +64,22 @@ namespace Systems
             }
             foreach (var oldField in _fieldFilter)
             {
+                if (fieldObjectPool.TryGetObjectByEntity(oldField, out var oldFieldObject))
+                {
+                    oldFieldObject.OnDragAction -= OnDragField;
+                    oldFieldObject.OnCellClickAction -= OnCellClick;
+                }
                 fieldObjectPool.ReturnObject(oldField);
                 _ecsFieldPool.Del(oldField);
             }
             var fieldEntity = _world.NewEntity();
             _ecsFieldPool.Add(fieldEntity);
             var field = fieldObjectPool.CreateObject(fieldEntity);
+            field.OnDragAction += OnDragField;
+            field.OnCellClickAction += OnCellClick;
             
-            var cellSize = _sharedData.ReadOnlySettings.CellSize;
-            var fieldOffset = CalculateFieldOffset(gridSize, cellSize);
-
-            
-            
-            field.Init(gridSize, _sharedData.ReadOnlySettings.CellSize, fieldOffset.Item1, fieldOffset.Item2, camera);
+            var fieldOffset = CalculateFieldOffset(gridSize);
+            field.Init(gridSize, Constants.CellSize, fieldOffset, camera);
             
             for (var i = 0; i < gridSize; i++)
             {
@@ -94,23 +97,34 @@ namespace Systems
                 foreach (var entity in _mineCountFilter)
                 {
                     ref var mineCount = ref _mineCountPool.Get(entity);
-                    mineCount.Init(minesCountNewValue, fieldOffset.Item1.x);
+                    mineCount.Init(minesCountNewValue, fieldOffset);
                     break;
                 }
             }
             else
             {
                 var mineCount = _world.NewEntity();
-                _mineCountPool.Add(mineCount).Init(minesCountNewValue, fieldOffset.Item1.x);
+                _mineCountPool.Add(mineCount).Init(minesCountNewValue, fieldOffset);
             }
         }
 
-        private UnityEngine.Camera MoveCameraToInitialPosition()
+        private void OnCellClick(Vector2Int cellIndex)
         {
+            _eventsBus.NewEventSingleton<CellClickedEvent>() = new CellClickedEvent(cellIndex);
+        }
+
+        private void OnDragField(Vector2 drag)
+        {
+            _eventsBus.NewEventSingleton<FieldDragEvent>() = new FieldDragEvent(drag);
+        }
+
+        private UnityEngine.Camera MoveCameraToInitialPosition(int gridSize)
+        {
+            var orthoSize = gridSize * Constants.CellSize / 2f;
             foreach (var entity in _cameraFilter)
             {
                 ref var camera = ref _ecsCameraPool.Get(entity);
-                camera.Init(Vector2.zero, _sharedData.ReadOnlySettings.InitialCameraOrthoSize);
+                camera.Init(Vector2.zero, orthoSize);
                 _dirtyPool.Add(entity);
                 if (_poolSet.TryGetPool<MainCamera>(PrefabType.Camera, out var cameraObjectPool) &&
                     cameraObjectPool.TryGetObjectByEntity(entity, out var cameraObject))
@@ -122,13 +136,11 @@ namespace Systems
             return null;
         }
 
-        private (Vector3, float) CalculateFieldOffset(int gridSize, float cellSize)
+        private float CalculateFieldOffset(int gridSize)
         {
             var additionalCoef = gridSize % 2 == 0 ? -0.5f : 0f;
-            var multiplier = gridSize * 0.5f + additionalCoef;
-            var totalSize = gridSize * cellSize;
-            var halfSize = totalSize * multiplier;
-            return (new Vector3(halfSize, halfSize, 0), multiplier);
+            var multiplier = Mathf.FloorToInt(gridSize * 0.5f) + additionalCoef;
+            return multiplier;
         }
     }
 }

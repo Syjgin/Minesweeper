@@ -33,7 +33,8 @@ namespace Bootstrap
             var poolSet = CreatePrefabPoolSet();
             var sharedData = new SharedData(eventsBus, poolSet, _playerInput,
                 new StartNewGameEvent(_initialData.GridSize, _initialData.MinesCount),
-                new ReadOnlySettings(_initialData.InitialCameraOrthoSize, _initialData.CellSize, _initialData.MinCameraOrthoSize, _initialData.MaxCameraOrthoSize));
+                new ReadOnlySettings(_initialData.MinGridSize, _initialData.MaxGridSize,
+                    _initialData.ScrollWheelSensibility, _initialData.DragSensibility));
             _updateRunSystems = new EcsSystems(_world, sharedData);
             _updateRunSystems.Add(new LoadInitialDataSystem())
                 .Add(new RestartGameSystem())
@@ -45,6 +46,8 @@ namespace Bootstrap
 #endif
                 .Add(eventsBus.GetDestroyEventsSystem()
                     .IncSingleton<StartNewGameEvent>()
+                    .IncSingleton<FieldDragEvent>()
+                    .IncSingleton<CellClickedEvent>()
                 )
                 .Init();
         }
@@ -61,7 +64,7 @@ namespace Bootstrap
             poolSet.RegisterPool(new ObjectPool<MainCamera>(_prefabLocator, PrefabType.Camera, 1));
             return poolSet;
         }
-        
+
         private void Update()
         {
             _updateRunSystems?.Run();
@@ -74,7 +77,7 @@ namespace Bootstrap
                 _updateRunSystems.Destroy();
                 _updateRunSystems = null;
             }
-            
+
             if (_world != null)
             {
                 _world.Destroy();

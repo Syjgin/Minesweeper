@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6519953937820554856}
   - component: {fileID: 2509303472527440403}
   - component: {fileID: -2673988927588503555}
+  - component: {fileID: 7532015409138082720}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -151,3 +152,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::View.MainCamera
   <Camera>k__BackingField: {fileID: 2422240466210316192}
+--- !u!114 &7532015409138082720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8364508343402800755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56666c5a40171f54783dd416a44f42bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.Physics2DRaycaster
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0

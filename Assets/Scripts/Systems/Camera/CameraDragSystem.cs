@@ -1,31 +1,60 @@
+using Bootstrap;
+using Components;
+using Events;
+using Leopotam.EcsLite;
+using SevenBoldPencil.EasyEvents;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using View;
 
 namespace Systems.Camera
 {
-    public class CameraDragSystem : CameraInputSystem
+    public class CameraDragSystem : IEcsInitSystem, IEcsRunSystem
     {
-        protected override string ActionName => "Drag";
+        
+        private EcsFilter _cameraFilter;
+        private EcsPool<CameraComponent> _cameraPool;
+        private EcsPool<Dirty> _dirtyPool;
+        private EcsPool<FieldCharacteristics>  _fieldCharacteristicsPool;
+        private EcsFilter _fieldCharacteristicsFilter;
+        private ReadOnlySettings _readOnlySettings;
+        private EventsBus _eventsBus;
 
-        protected override void ActionOnPerformed(InputAction.CallbackContext obj)
+        public void Init(IEcsSystems systems)
         {
-            var amount = obj.ReadValue<Vector2>();
+            var sharedData = systems.GetShared<SharedData>();
+            var world = systems.GetWorld();
+            _cameraFilter = world.Filter<CameraComponent>().End();
+            _cameraPool = world.GetPool<CameraComponent>();
+            _dirtyPool = world.GetPool<Dirty>();
+            _fieldCharacteristicsPool = world.GetPool<FieldCharacteristics>();
+            _fieldCharacteristicsFilter = world.Filter<FieldCharacteristics>().End();
+            _eventsBus = sharedData.EventsBus;
+            _readOnlySettings = sharedData.ReadOnlySettings;
+        }
+
+        public void Run(IEcsSystems systems)
+        {
+            if(!_eventsBus.HasEventSingleton<FieldDragEvent>(out var fieldDragEvent))
+                return;
             var maxOffset = 0f;
-            foreach (var entity in FieldCharacteristicsFilter)
+            foreach (var entity in _fieldCharacteristicsFilter)
             {
-                ref var characteristics = ref FieldCharacteristicsPool.Get(entity);
+                ref var characteristics = ref _fieldCharacteristicsPool.Get(entity);
                 maxOffset = characteristics.MaxOffset;
                 break;
             }
-            foreach (var entity in CameraFilter)
+            var resultDelta = -1 * fieldDragEvent.Delta * _readOnlySettings.DragSensibility;
+            foreach (var entity in _cameraFilter)
             {
-                ref var cameraComponent = ref CameraPool.Get(entity);
-                if(Mathf.Abs(cameraComponent.Position.x + amount.x) > maxOffset)
+                ref var cameraComponent = ref _cameraPool.Get(entity);
+                if(Mathf.Abs(cameraComponent.Position.x + resultDelta.x) > maxOffset)
                     break;
-                if(Mathf.Abs(cameraComponent.Position.y + amount.y) > maxOffset)
+                if(Mathf.Abs(cameraComponent.Position.y + resultDelta.y) > maxOffset)
                     break;
-                cameraComponent.Drag(amount);
-                DirtyPool.Add(entity);
+                Debug.Log($"drag {cameraComponent.Position} with delta {resultDelta}, max offset: {maxOffset}");
+                cameraComponent.Drag(resultDelta);
+                _dirtyPool.Add(entity);
                 break;
             }
         }

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: InitialData
   m_EditorClassIdentifier: Assembly-CSharp::Config.InitialData
   <GridSize>k__BackingField: 8
+  <MaxGridSize>k__BackingField: 50
+  <MinGridSize>k__BackingField: 5
   <MinesCount>k__BackingField: 10
-  <InitialCameraOrthoSize>k__BackingField: 5
-  <CellSize>k__BackingField: 1
-  <MinCameraOrthoSize>k__BackingField: 1
-  <MaxCameraOrthoSize>k__BackingField: 20
+  <ScrollWheelSensibility>k__BackingField: 0.1
+  <DragSensibility>k__BackingField: 0.02
