@@ -45,6 +45,7 @@ namespace Bootstrap
                 .Add(new WindowStateChangeSystem())
                 .Add(new MainUiInputSystem())
                 .Add(new NewGameWindowInputSystem())
+                .Add(new PauseWindowInputSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
 #endif
@@ -52,7 +53,7 @@ namespace Bootstrap
                     .IncSingleton<StartNewGameEvent>()
                     .IncSingleton<FieldDragEvent>()
                     .IncSingleton<CellClickedEvent>()
-                    .IncSingleton<WindowStateChangeRequest>()
+                    .IncReplicant<WindowStateChangeRequest>()
                     .IncSingleton<PauseRequest>()
                 )
                 .Init();

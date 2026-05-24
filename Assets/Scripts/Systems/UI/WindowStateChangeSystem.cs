@@ -29,17 +29,26 @@ namespace Systems.UI
 
         public void Run(IEcsSystems systems)
         {
-            if(!_eventsBus.HasEventSingleton<WindowStateChangeRequest>(out var stateChangeData))
+            if(!_eventsBus.HasEvents<WindowStateChangeRequest>())
                 return;
+            foreach (var eventEntity in _eventsBus.GetEventBodies<WindowStateChangeRequest>(out var eventPool))
+            {
+                ref var eventBody = ref eventPool.Get(eventEntity);
+                HandleStateChangeEvent(ref eventBody);
+            }
+        }
+
+        private void HandleStateChangeEvent(ref WindowStateChangeRequest eventBody)
+        {
             foreach (var entity in _windowFilter)
             {
                 ref var windowComponent = ref _windowPool.Get(entity);
-                if(windowComponent.WindowType != stateChangeData.WindowType)
+                if(windowComponent.WindowType != eventBody.WindowType)
                     continue;
-                if(windowComponent.IsOpen == stateChangeData.IsOpen)
+                if(windowComponent.IsOpen == eventBody.IsOpen)
                     continue;
-                windowComponent.SetOpened(stateChangeData.IsOpen);
-                var prefabType = WindowTypeToPrefabType(stateChangeData.WindowType);
+                windowComponent.SetOpened(eventBody.IsOpen);
+                var prefabType = WindowUtils.WindowTypeToPrefabType(eventBody.WindowType);
                 BaseWindow targetWindow = null;
                 switch (prefabType)
                 {
@@ -73,16 +82,6 @@ namespace Systems.UI
         {
             _poolSet.TryGetPool<T>(prefabType, out var pool);
             return pool.TryGetObjectByEntity(entity, out var rawWindow) ? rawWindow : null;
-        }
-
-        private PrefabType WindowTypeToPrefabType(WindowType windowType)
-        {
-            return windowType switch
-            {
-                WindowType.NewGame => PrefabType.NewGameWindow,
-                WindowType.Pause => PrefabType.PauseWindow,
-                _ => PrefabType.None
-            };
         }
     }
 }

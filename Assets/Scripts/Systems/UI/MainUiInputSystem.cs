@@ -14,8 +14,8 @@ namespace Systems.UI
         private ObjectPool<MainUi> _objectPool;
         private EcsFilter _uiFilter;
         private EventsBus _eventsBus;
-        private EcsFilter _characteristicsFilter;
-        private EcsPool<CurrentGameCharacteristicsComponent>  _characteristicsPool; 
+        private EcsFilter _paramsFilter;
+        private EcsPool<SavedParamsComponent>  _paramsPool; 
         
         public void Init(IEcsSystems systems)
         {
@@ -24,8 +24,8 @@ namespace Systems.UI
             var sharedData = systems.GetShared<SharedData>();
             var poolSet = sharedData.PoolSet;
             _eventsBus = sharedData.EventsBus;
-            _characteristicsPool = ecsWorld.GetPool<CurrentGameCharacteristicsComponent>();
-            _characteristicsFilter = ecsWorld.Filter<CurrentGameCharacteristicsComponent>().End();
+            _paramsPool = ecsWorld.GetPool<SavedParamsComponent>();
+            _paramsFilter = ecsWorld.Filter<SavedParamsComponent>().End();
             
             if(!poolSet.TryGetPool(PrefabType.MainUi, out _objectPool))
                 return;
@@ -40,16 +40,12 @@ namespace Systems.UI
 
         private void OnRestartClick()
         {
-            foreach (var entity in _characteristicsFilter)
-            {
-                ref var characteristics = ref _characteristicsPool.Get(entity);
-                _eventsBus.NewEventSingleton<StartNewGameEvent>() = new StartNewGameEvent(characteristics.GridSize, characteristics.MinesCount);
-            }
+            RestartUtils.RestartCurrentGame(_paramsFilter, _paramsPool, _eventsBus);
         }
 
         private void OnPauseClick()
         {
-            _eventsBus.NewEventSingleton<WindowStateChangeRequest>() =
+            _eventsBus.NewEvent<WindowStateChangeRequest>() =
                 new WindowStateChangeRequest(WindowType.Pause, true);
         }
 

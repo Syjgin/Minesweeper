@@ -19,7 +19,7 @@ namespace Systems
         private EcsPool<CameraComponent> _ecsCameraPool;
         private EcsPool<FieldComponent> _fieldPool;
         private EcsPool<DirtyComponent> _dirtyPool;
-        private EcsPool<CurrentGameCharacteristicsComponent> _ecsCharacteristicPool;
+        private EcsPool<SavedParamsComponent> _ecsCharacteristicPool;
         private EcsFilter _cameraFilter;
         private EcsFilter _cellsFilter;
         private EcsFilter _fieldFilter;
@@ -39,8 +39,8 @@ namespace Systems
             _cameraFilter = _world.Filter<CameraComponent>().End();
             _cellsFilter = _world.Filter<CellComponent>().End();
             _fieldFilter = _world.Filter<FieldComponent>().End();
-            _currentGameCharacteristicsFilter = _world.Filter<CurrentGameCharacteristicsComponent>().End();
-            _ecsCharacteristicPool = _world.GetPool<CurrentGameCharacteristicsComponent>();
+            _currentGameCharacteristicsFilter = _world.Filter<SavedParamsComponent>().End();
+            _ecsCharacteristicPool = _world.GetPool<SavedParamsComponent>();
         }
 
         public void Run(IEcsSystems systems)

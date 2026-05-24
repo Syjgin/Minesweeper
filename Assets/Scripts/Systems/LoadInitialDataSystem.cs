@@ -32,7 +32,7 @@ namespace Systems
             CreateMainUI();
             CreateNewGameWindow();
             CreatePauseWindow();
-            eventsBus.NewEventSingleton<WindowStateChangeRequest>() =
+            eventsBus.NewEvent<WindowStateChangeRequest>() =
                 new WindowStateChangeRequest(WindowType.NewGame, true);
         }
 

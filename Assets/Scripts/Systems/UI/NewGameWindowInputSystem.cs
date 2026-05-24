@@ -49,7 +49,7 @@ namespace Systems.UI
             var gridSize = NormalizeGridSize(windowObject.LevelSizeInput.text);
             var minesCount = NormalizeMinesCount(windowObject.MinesCountInput.text, gridSize);
             _eventsBus.NewEventSingleton<StartNewGameEvent>() = new StartNewGameEvent(gridSize, minesCount);
-            _eventsBus.NewEventSingleton<WindowStateChangeRequest>() =
+            _eventsBus.NewEvent<WindowStateChangeRequest>() =
                 new WindowStateChangeRequest(WindowType.NewGame, false);
         }
 
@@ -80,16 +80,7 @@ namespace Systems.UI
 
         private NewGameWindow GetWindow()
         {
-            _poolSet.TryGetPool<NewGameWindow>(PrefabType.NewGameWindow, out var windowObjectPool);
-            foreach (var entity in _windowFilter)
-            {
-                ref var window = ref _windowPool.Get(entity);
-                if(window.WindowType != WindowType.NewGame)
-                    continue;
-                windowObjectPool.TryGetObjectByEntity(entity, out var windowObject);
-                return windowObject;
-            }
-            return null;
+            return WindowUtils.GetWindow<NewGameWindow>(_poolSet, PrefabType.NewGameWindow, _windowFilter, _windowPool);
         }
     }
 }
