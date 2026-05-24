@@ -1,6 +1,6 @@
 namespace Components
 {
-    public struct Dirty
+    public struct DirtyComponent
     {
         
     }

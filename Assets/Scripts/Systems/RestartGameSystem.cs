@@ -16,14 +16,12 @@ namespace Systems
         private EventsBus _eventsBus;
         private PoolSet _poolSet;
         private EcsPool<CellComponent> _ecsCellPool;
-        private EcsPool<FieldComponent> _ecsFieldPool;
         private EcsPool<CameraComponent> _ecsCameraPool;
-        private EcsPool<FieldCharacteristics> _mineCountPool;
-        private EcsPool<Dirty> _dirtyPool;
+        private EcsPool<FieldComponent> _fieldPool;
+        private EcsPool<DirtyComponent> _dirtyPool;
         private EcsFilter _cameraFilter;
-        private EcsFilter _fieldFilter;
         private EcsFilter _cellsFilter;
-        private EcsFilter _mineCountFilter;
+        private EcsFilter _fieldFilter;
         private SharedData _sharedData;
         
         public void Init(IEcsSystems systems)
@@ -32,15 +30,13 @@ namespace Systems
             _sharedData = systems.GetShared<SharedData>();
             _eventsBus = _sharedData.EventsBus;
             _ecsCellPool = _world.GetPool<CellComponent>();
-            _ecsFieldPool = _world.GetPool<FieldComponent>();
             _ecsCameraPool = _world.GetPool<CameraComponent>();
-            _mineCountPool = _world.GetPool<FieldCharacteristics>();
-            _dirtyPool = _world.GetPool<Dirty>();
+            _fieldPool = _world.GetPool<FieldComponent>();
+            _dirtyPool = _world.GetPool<DirtyComponent>();
             _poolSet = systems.GetShared<SharedData>().PoolSet;
             _cameraFilter = _world.Filter<CameraComponent>().End();
-            _fieldFilter = _world.Filter<FieldComponent>().End();
             _cellsFilter = _world.Filter<CellComponent>().End();
-            _mineCountFilter = _world.Filter<FieldCharacteristics>().End();
+            _fieldFilter = _world.Filter<FieldComponent>().End();
         }
 
         public void Run(IEcsSystems systems)
@@ -70,15 +66,16 @@ namespace Systems
                     oldFieldObject.OnCellClickAction -= OnCellClick;
                 }
                 fieldObjectPool.ReturnObject(oldField);
-                _ecsFieldPool.Del(oldField);
+                _fieldPool.Del(oldField);
             }
+            var fieldOffset = CalculateFieldOffset(gridSize);
+            
             var fieldEntity = _world.NewEntity();
-            _ecsFieldPool.Add(fieldEntity);
+            _fieldPool.Add(fieldEntity).Init(minesCountNewValue, fieldOffset);
             var field = fieldObjectPool.CreateObject(fieldEntity);
             field.OnDragAction += OnDragField;
             field.OnCellClickAction += OnCellClick;
             
-            var fieldOffset = CalculateFieldOffset(gridSize);
             field.Init(gridSize, Constants.CellSize, fieldOffset, camera);
             
             for (var i = 0; i < gridSize; i++)
@@ -90,21 +87,6 @@ namespace Systems
                     var cellObject = cellViewObjectPool.CreateObject(cellEntity);
                     field.AddCell(cellObject);
                 }
-            }
-
-            if (_mineCountFilter.GetEntitiesCount() > 0)
-            {
-                foreach (var entity in _mineCountFilter)
-                {
-                    ref var mineCount = ref _mineCountPool.Get(entity);
-                    mineCount.Init(minesCountNewValue, fieldOffset);
-                    break;
-                }
-            }
-            else
-            {
-                var mineCount = _world.NewEntity();
-                _mineCountPool.Add(mineCount).Init(minesCountNewValue, fieldOffset);
             }
         }
 

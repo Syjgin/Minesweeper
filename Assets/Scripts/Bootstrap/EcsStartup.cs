@@ -6,6 +6,7 @@ using Pools;
 using SevenBoldPencil.EasyEvents;
 using Systems;
 using Systems.Camera;
+using Systems.UI;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -41,6 +42,8 @@ namespace Bootstrap
                 .Add(new CameraDragSystem())
                 .Add(new CameraZoomSystem())
                 .Add(new ApplyMoveCameraSystem())
+                .Add(new WindowStateChangeSystem())
+                .Add(new NewGameWindowInputSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
 #endif
@@ -48,6 +51,8 @@ namespace Bootstrap
                     .IncSingleton<StartNewGameEvent>()
                     .IncSingleton<FieldDragEvent>()
                     .IncSingleton<CellClickedEvent>()
+                    .IncSingleton<WindowStateChangeRequest>()
+                    .IncSingleton<PauseRequest>()
                 )
                 .Init();
         }
@@ -57,8 +62,8 @@ namespace Bootstrap
             var poolSet = new PoolSet();
 
             poolSet.RegisterPool(new ObjectPool<CellView>(_prefabLocator, PrefabType.Cell, 512));
-            poolSet.RegisterPool(new ObjectPool<NewGameWindow>(_prefabLocator, PrefabType.NewGameWindow, 1));
-            poolSet.RegisterPool(new ObjectPool<PauseWindow>(_prefabLocator, PrefabType.PauseWindow, 1));
+            poolSet.RegisterPool(new ObjectPool<NewGameWindow>(_prefabLocator, PrefabType.NewGameWindow, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<PauseWindow>(_prefabLocator, PrefabType.PauseWindow, 1, _uiRoot.transform));
             poolSet.RegisterPool(new ObjectPool<MainUi>(_prefabLocator, PrefabType.MainUi, 1, _uiRoot.transform));
             poolSet.RegisterPool(new ObjectPool<FieldView>(_prefabLocator, PrefabType.Field, 1));
             poolSet.RegisterPool(new ObjectPool<MainCamera>(_prefabLocator, PrefabType.Camera, 1));

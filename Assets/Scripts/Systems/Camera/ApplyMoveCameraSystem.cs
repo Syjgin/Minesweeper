@@ -11,15 +11,15 @@ namespace Systems.Camera
     public class ApplyMoveCameraSystem : IEcsInitSystem, IEcsRunSystem
     {
         private EcsPool<CameraComponent> _ecsCameraPool;
-        private EcsPool<Dirty> _dirtyPool;
+        private EcsPool<DirtyComponent> _dirtyPool;
         private EcsFilter _cameraFilter;
         private PoolSet _poolSet;
 
         public void Init(IEcsSystems systems)
         {
-            _cameraFilter = systems.GetWorld().Filter<CameraComponent>().Inc<Dirty>().End();
+            _cameraFilter = systems.GetWorld().Filter<CameraComponent>().Inc<DirtyComponent>().End();
             _ecsCameraPool = systems.GetWorld().GetPool<CameraComponent>();
-            _dirtyPool = systems.GetWorld().GetPool<Dirty>();
+            _dirtyPool = systems.GetWorld().GetPool<DirtyComponent>();
             _poolSet = systems.GetShared<SharedData>().PoolSet;
         }
 

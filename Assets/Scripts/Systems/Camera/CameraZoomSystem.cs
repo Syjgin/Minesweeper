@@ -12,7 +12,7 @@ namespace Systems.Camera
         private InputAction _action;
         private EcsFilter _cameraFilter;
         private EcsPool<CameraComponent> _cameraPool;
-        private EcsPool<Dirty> _dirtyPool;
+        private EcsPool<DirtyComponent> _dirtyPool;
         private ReadOnlySettings _readOnlySettings;
         
         private const string ActionName = "ScrollWheel";
@@ -25,7 +25,7 @@ namespace Systems.Camera
             _readOnlySettings = sharedData.ReadOnlySettings;
             _cameraFilter = world.Filter<CameraComponent>().End();
             _cameraPool = world.GetPool<CameraComponent>();
-            _dirtyPool = world.GetPool<Dirty>();
+            _dirtyPool = world.GetPool<DirtyComponent>();
             _action = playerInput.actions.FindAction(ActionName);
             _action.performed += ActionOnPerformed;
         }

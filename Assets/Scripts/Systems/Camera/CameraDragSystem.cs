@@ -14,8 +14,8 @@ namespace Systems.Camera
         
         private EcsFilter _cameraFilter;
         private EcsPool<CameraComponent> _cameraPool;
-        private EcsPool<Dirty> _dirtyPool;
-        private EcsPool<FieldCharacteristics>  _fieldCharacteristicsPool;
+        private EcsPool<DirtyComponent> _dirtyPool;
+        private EcsPool<FieldComponent>  _fieldCharacteristicsPool;
         private EcsFilter _fieldCharacteristicsFilter;
         private ReadOnlySettings _readOnlySettings;
         private EventsBus _eventsBus;
@@ -26,9 +26,9 @@ namespace Systems.Camera
             var world = systems.GetWorld();
             _cameraFilter = world.Filter<CameraComponent>().End();
             _cameraPool = world.GetPool<CameraComponent>();
-            _dirtyPool = world.GetPool<Dirty>();
-            _fieldCharacteristicsPool = world.GetPool<FieldCharacteristics>();
-            _fieldCharacteristicsFilter = world.Filter<FieldCharacteristics>().End();
+            _dirtyPool = world.GetPool<DirtyComponent>();
+            _fieldCharacteristicsPool = world.GetPool<FieldComponent>();
+            _fieldCharacteristicsFilter = world.Filter<FieldComponent>().End();
             _eventsBus = sharedData.EventsBus;
             _readOnlySettings = sharedData.ReadOnlySettings;
         }

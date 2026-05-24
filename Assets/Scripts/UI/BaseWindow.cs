@@ -1,17 +1,20 @@
+using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace UI
 {
     public class BaseWindow : UIBehaviour
     {
+        [SerializeField] private GameObject _uiRoot;
         public void Show()
         {
-            gameObject.SetActive(true);
+            _uiRoot.SetActive(true);
         }
 
         public void Hide()
         {
-            gameObject.SetActive(false);
+            _uiRoot.SetActive(false);
         }
     }
 }

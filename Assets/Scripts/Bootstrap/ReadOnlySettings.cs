@@ -2,12 +2,12 @@ namespace Bootstrap
 {
     public struct ReadOnlySettings
     {
-        public readonly float MinGridSize;
-        public readonly float MaxGridSize;
+        public readonly int MinGridSize;
+        public readonly int MaxGridSize;
         public readonly float ScrollWheelSensibility;
         public readonly float DragSensibility;
 
-        public ReadOnlySettings(float maxGridSize, float minGridSize,  float scrollWheelSensibility,  float dragSensibility)
+        public ReadOnlySettings(int minGridSize, int maxGridSize,  float scrollWheelSensibility,  float dragSensibility)
         {
             MaxGridSize = maxGridSize;
             MinGridSize = minGridSize;
