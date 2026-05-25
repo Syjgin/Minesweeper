@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Bootstrap;
 using Components;
@@ -62,7 +63,6 @@ namespace Systems.Cells
             else
             {
                 var coordinatesCache = DictionaryPool<Vector2Int, int>.Get();
-                var neighbourCoordinates = HashSetPool<Vector2Int>.Get();
                 
                 var gridSize = 0;
                 foreach (var entity in SavedParamsFilter)
@@ -97,7 +97,6 @@ namespace Systems.Cells
                     OpenAllNonMineNeighbors(clickData.Position, gridSize, coordinatesCache);
                 }
                 DictionaryPool<Vector2Int, int>.Release(coordinatesCache);
-                HashSetPool<Vector2Int>.Release(neighbourCoordinates);
             }
 
             if (!wasGameOver) 
@@ -110,20 +109,28 @@ namespace Systems.Cells
                 new WindowStateChangeRequest(WindowType.GameOver, true);
         }
         
+        private readonly Vector2Int[] _neighbourArray = new Vector2Int[8];
+        private readonly List<Vector2Int> _snapshot = new List<Vector2Int>(8);
+        
         private void OpenAllNonMineNeighbors(Vector2Int coordinates, int gridSize, Dictionary<Vector2Int, int> entitiesByCoordinates)
         {
-            var neighbourCoordinates = CoordinateUtils.FillNeighbourCoordinates(coordinates, gridSize);
-            foreach (var coordinate in neighbourCoordinates)
+            Span<Vector2Int> localSnapshot = stackalloc Vector2Int[8];
+            var count = CoordinateUtils.FillNeighbourCoordinatesToArrayToSpan(coordinates, localSnapshot, gridSize);
+
+            foreach (var coordinate in localSnapshot[..count])
             {
                 var cellEntity = entitiesByCoordinates[coordinate];
-                if (MinesPool.Has(cellEntity)) 
+                if (MinesPool.Has(cellEntity))
                     continue;
+
                 ref var state = ref StatesPool.Get(cellEntity);
-                if(state.Visual == CellVisual.Opened)
+                if (state.Visual == CellVisual.Opened)
                     continue;
+
                 state.UpdateVisual(CellVisual.Opened);
                 DirtyPool.Add(cellEntity);
-                if(state.NearMinesCount == 0)
+
+                if (state.NearMinesCount == 0)
                     OpenAllNonMineNeighbors(coordinate, gridSize, entitiesByCoordinates);
             }
         }
