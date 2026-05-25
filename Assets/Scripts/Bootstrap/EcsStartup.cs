@@ -49,6 +49,7 @@ namespace Bootstrap
                 .Add(new NewGameWindowInputSystem())
                 .Add(new PauseWindowInputSystem())
                 .Add(new CellClickHandleSystem())
+                .Add(new CalculateMinesSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
 #endif

@@ -6,7 +6,7 @@ namespace View
 {
     public class FieldView : MonoBehaviour, IPointerUpHandler, IDragHandler, IPointerDownHandler
     {
-        public Action<Vector2Int> OnCellClickAction;
+        public Action<MouseClickData> OnCellClickAction;
         public Action<Vector2> OnDragAction;
         [SerializeField] private BoxCollider2D _collider;
         private Vector2Int _gridSize;
@@ -42,8 +42,8 @@ namespace View
         {
             while (_currentIndex < _totalCells)
             {
-                var x = _currentIndex % _gridSize.x;
-                var y = _currentIndex / _gridSize.x;
+                var x = _currentIndex / _gridSize.x;
+                var y = _currentIndex % _gridSize.x;
                 _currentIndex++;
 
                 return new Vector2Int(x, y);
@@ -78,7 +78,8 @@ namespace View
 
             if (x >= 0 && x < _gridSize.x && y >= 0 && y < _gridSize.y)
             {
-                OnCellClickAction?.Invoke(new Vector2Int(x, y));
+                bool isLeftButton = eventData.button == PointerEventData.InputButton.Left;
+                OnCellClickAction?.Invoke(new MouseClickData(new Vector2Int(x, y), isLeftButton));
             }
         }
 

@@ -76,7 +76,7 @@ namespace Systems
                 return;
             foreach (var entity in _gameStartedFilter)
             {
-                _gameStartedPool.Del(entity);
+                _world.DelEntity(entity);
             }
             foreach (var cellEntity in _cellsFilter)
             {
@@ -117,9 +117,9 @@ namespace Systems
             }
         }
 
-        private void OnCellClick(Vector2Int cellIndex)
+        private void OnCellClick(MouseClickData mouseClickData)
         {
-            _eventsBus.NewEventSingleton<CellClickedEvent>() = new CellClickedEvent(cellIndex);
+            _eventsBus.NewEventSingleton<CellClickedEvent>() = new CellClickedEvent(mouseClickData);
         }
 
         private void OnDragField(Vector2 drag)

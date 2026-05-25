@@ -1,15 +1,16 @@
 using SevenBoldPencil.EasyEvents;
 using UnityEngine;
+using View;
 
 namespace Events
 {
     public struct CellClickedEvent : IEventSingleton
     {
-        public readonly Vector2Int CellIndex;
+        public readonly MouseClickData MouseClickData;
         
-        public  CellClickedEvent(Vector2Int cellIndex)
+        public  CellClickedEvent(MouseClickData mouseClickData)
         {
-            CellIndex = cellIndex;
+            MouseClickData = mouseClickData;
         }
     }
 }
