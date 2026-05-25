@@ -62,6 +62,16 @@ namespace Systems.UI
                         targetWindow = TryGetWindow<PauseWindow>(PrefabType.PauseWindow, entity);
                     }
                         break;
+                    case PrefabType.GameOverWindow:
+                    {
+                        targetWindow = TryGetWindow<GameOverWindow>(PrefabType.GameOverWindow, entity);
+                    }
+                        break;
+                    case PrefabType.WinWindow:
+                    {
+                        targetWindow = TryGetWindow<WinWindow>(PrefabType.WinWindow, entity);
+                    }
+                        break;
                     default:
                         break;
                 }

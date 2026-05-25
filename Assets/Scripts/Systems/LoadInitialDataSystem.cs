@@ -32,8 +32,20 @@ namespace Systems
             CreateMainUI();
             CreateNewGameWindow();
             CreatePauseWindow();
+            CreateWinWindow();
+            CreateGameOverWindow();
             eventsBus.NewEvent<WindowStateChangeRequest>() =
                 new WindowStateChangeRequest(WindowType.NewGame, true);
+        }
+
+        private void CreateGameOverWindow()
+        {
+            CreateWindow<GameOverWindow>(PrefabType.GameOverWindow, WindowType.GameOver);
+        }
+
+        private void CreateWinWindow()
+        {
+            CreateWindow<WinWindow>(PrefabType.WinWindow, WindowType.Win);
         }
 
         private void CreateCamera()

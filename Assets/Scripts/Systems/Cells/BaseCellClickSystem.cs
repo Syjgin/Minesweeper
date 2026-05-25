@@ -25,6 +25,8 @@ namespace Systems.Cells
         protected EcsPool<CalculateMinesComponent> CalculateMinesPool;
         protected EcsFilter SavedParamsFilter;
         protected EcsPool<SavedParamsComponent> SavedParamsPool;
+        protected EcsFilter MinesFilter;
+        protected EcsFilter NonMinesFilter;
         
         public virtual void Init(IEcsSystems systems)
         {
@@ -36,11 +38,13 @@ namespace Systems.Cells
             StatesPool = World.GetPool<CellVisualStateComponent>();
             DirtyPool = World.GetPool<DirtyComponent>();
             MinesPool = World.GetPool<MineComponent>();
+            MinesFilter = World.Filter<MineComponent>().End();
             GameStartedFilter = World.Filter<GameStartedComponent>().End();
             GameStartedPool = World.GetPool<GameStartedComponent>();
             CalculateMinesPool = World.GetPool<CalculateMinesComponent>();
             SavedParamsFilter = World.Filter<SavedParamsComponent>().End();
             SavedParamsPool = World.GetPool<SavedParamsComponent>();
+            NonMinesFilter = World.Filter<CellVisualStateComponent>().Exc<MineComponent>().End();
         }
         
         protected void HandleOrdinalClick(MouseClickData clickData)
@@ -99,19 +103,52 @@ namespace Systems.Cells
                 DictionaryPool<Vector2Int, int>.Release(coordinatesCache);
             }
 
-            if (!wasGameOver) 
+            if (wasGameOver)
+            {
+                foreach (var entity in GameStartedFilter)
+                {
+                    GameStartedPool.Del(entity);
+                }
+
+                EventsBus.NewEvent<WindowStateChangeRequest>() =
+                    new WindowStateChangeRequest(WindowType.GameOver, true);
+            }
+            else
+            {
+                CheckIsWin();
+            }
+        }
+
+        private void CheckIsWin()
+        {
+            var wasNonFlaggerMineFound = false;
+            foreach (var entity in MinesFilter)
+            {
+                ref var cell = ref StatesPool.Get(entity);
+                if (cell.Visual != CellVisual.Flag)
+                {
+                    wasNonFlaggerMineFound = true;
+                    break;
+                }
+            }
+
+            if(wasNonFlaggerMineFound)
                 return;
+            foreach (var entity in NonMinesFilter)
+            {
+                ref var cell = ref StatesPool.Get(entity);
+                if(cell.Visual != CellVisual.Opened)
+                    return;
+            }
             foreach (var entity in GameStartedFilter)
             {
                 GameStartedPool.Del(entity);
             }
+
             EventsBus.NewEvent<WindowStateChangeRequest>() =
-                new WindowStateChangeRequest(WindowType.GameOver, true);
+                new WindowStateChangeRequest(WindowType.Win, true);
         }
-        
-        private readonly Vector2Int[] _neighbourArray = new Vector2Int[8];
-        private readonly List<Vector2Int> _snapshot = new List<Vector2Int>(8);
-        
+
         private void OpenAllNonMineNeighbors(Vector2Int coordinates, int gridSize, Dictionary<Vector2Int, int> entitiesByCoordinates)
         {
             Span<Vector2Int> localSnapshot = stackalloc Vector2Int[8];

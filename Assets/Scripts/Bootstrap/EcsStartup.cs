@@ -47,6 +47,8 @@ namespace Bootstrap
                 .Add(new MainUiInputSystem())
                 .Add(new NewGameWindowInputSystem())
                 .Add(new PauseWindowInputSystem())
+                .Add(new WinWindowInputSystem())
+                .Add(new GameOverWindowInputSystem())
                 .Add(new CellClickHandleSystem())
                 .Add(new CalculateMinesSystem())
                 .Add(new WindowStateChangeSystem())
@@ -70,6 +72,8 @@ namespace Bootstrap
             poolSet.RegisterPool(new ObjectPool<CellView>(_prefabLocator, PrefabType.Cell, 512));
             poolSet.RegisterPool(new ObjectPool<NewGameWindow>(_prefabLocator, PrefabType.NewGameWindow, 1, _uiRoot.transform));
             poolSet.RegisterPool(new ObjectPool<PauseWindow>(_prefabLocator, PrefabType.PauseWindow, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<GameOverWindow>(_prefabLocator, PrefabType.GameOverWindow, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<WinWindow>(_prefabLocator, PrefabType.WinWindow, 1, _uiRoot.transform));
             poolSet.RegisterPool(new ObjectPool<MainUi>(_prefabLocator, PrefabType.MainUi, 1, _uiRoot.transform));
             poolSet.RegisterPool(new ObjectPool<FieldView>(_prefabLocator, PrefabType.Field, 1));
             poolSet.RegisterPool(new ObjectPool<MainCamera>(_prefabLocator, PrefabType.Camera, 1));

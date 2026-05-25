@@ -7,12 +7,12 @@ namespace UI
     public class BaseWindow : UIBehaviour
     {
         [SerializeField] private GameObject[] _uiToShow;
-        public void Show()
+        public virtual void Show()
         {
             ChangeVisibility(true);
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             ChangeVisibility(false);
         }
