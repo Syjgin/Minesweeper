@@ -44,7 +44,7 @@ namespace Systems.Cells
                 foreach (var entity in CellsFilter)
                 {
                     ref var cell = ref CoordsPool.Get(entity);
-                    if (cell.X != clickData.Position.x || cell.Y != clickData.Position.y) 
+                    if (cell.Coordinates.x != clickData.Position.x || cell.Coordinates.y != clickData.Position.y) 
                         continue;
                     ref var state = ref StatesPool.Get(entity);
                     state.UpdateVisual(CellVisual.Flag);
@@ -58,7 +58,7 @@ namespace Systems.Cells
                 foreach (var entity in CellsFilter)
                 {
                     ref var cell = ref CoordsPool.Get(entity);
-                    if (cell.X == clickData.Position.x && cell.Y == clickData.Position.y)
+                    if (cell.Coordinates.x == clickData.Position.x && cell.Coordinates.y == clickData.Position.y)
                     {
                         ref var state = ref StatesPool.Get(entity);
                         if (MinesPool.Has(entity))

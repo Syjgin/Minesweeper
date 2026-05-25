@@ -108,7 +108,7 @@ namespace Systems
                 for (var j = 0; j < gridSize; j++)
                 {
                     var cellEntity = _world.NewEntity();
-                    _ecsCellPool.Add(cellEntity).Init(i, j);
+                    _ecsCellPool.Add(cellEntity).Init(new Vector2Int(i, j));
                     _ecsCellVisualStatePool.Add(cellEntity).UpdateVisual(CellVisual.Closed);
                     _dirtyPool.Add(cellEntity);
                     var cellObject = cellViewObjectPool.CreateObject(cellEntity);

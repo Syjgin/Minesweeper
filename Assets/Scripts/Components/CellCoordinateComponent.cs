@@ -1,14 +1,14 @@
+using UnityEngine;
+
 namespace Components
 {
     public struct CellCoordinateComponent
     {
-        public int X { get; private set; }
-        public int Y { get; private set; }
+        public Vector2Int Coordinates {get; private set;}
 
-        public CellCoordinateComponent Init(int x, int y)
+        public CellCoordinateComponent Init(Vector2Int coordinates)
         {
-            X = x;
-            Y = y;
+            Coordinates = coordinates;
             return this;
         }
     }
