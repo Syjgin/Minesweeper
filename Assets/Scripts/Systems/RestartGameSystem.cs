@@ -5,6 +5,7 @@ using Events;
 using Leopotam.EcsLite;
 using Pools;
 using SevenBoldPencil.EasyEvents;
+using UI;
 using UnityEngine;
 using View;
 
@@ -29,6 +30,9 @@ namespace Systems
         private EcsFilter _gameStartedFilter;
         private EcsPool<FreeFlagsComponent> _flagsPool;
         private EcsFilter _flagsFilter;
+        private EcsPool<TimerComponent> _timerPool;
+        private EcsFilter _timeFilter;
+        private EcsFilter _mainUiFilter;
         
         public void Init(IEcsSystems systems)
         {
@@ -49,6 +53,9 @@ namespace Systems
             _gameStartedFilter = _world.Filter<GameStartedComponent>().End();
             _flagsPool = _world.GetPool<FreeFlagsComponent>();
             _flagsFilter = _world.Filter<FreeFlagsComponent>().End();
+            _timeFilter = _world.Filter<TimerComponent>().End();
+            _timerPool = _world.GetPool<TimerComponent>();
+            _mainUiFilter = _world.Filter<MainUiComponent>().End();
         }
 
         public void Run(IEcsSystems systems)
@@ -68,6 +75,29 @@ namespace Systems
                 break;
             }
 
+            HandleFlags(startNewGameEvent);
+            RecreateTimer();
+            var mainCamera = MoveCameraToInitialPosition(startNewGameEvent.GridSize);
+            FillField(startNewGameEvent.GridSize, startNewGameEvent.MinesCount, mainCamera);
+        }
+
+        private void RecreateTimer()
+        {
+            foreach (var entity in _timeFilter)
+            {
+                _world.DelEntity(entity);       
+            }
+            var timerEntity = _world.NewEntity();
+            _timerPool.Add(timerEntity);
+            if (!_poolSet.TryGetPool<MainUi>(PrefabType.MainUi, out var mainUiPool))
+                return;
+            if (!mainUiPool.TryGetObjectByEntity(_mainUiFilter.GetRawEntities()[0], out var mainUi))
+                return;
+            mainUi.Timer.text = "";
+        }
+
+        private void HandleFlags(StartNewGameEvent startNewGameEvent)
+        {
             if (_flagsFilter.GetEntitiesCount() == 0)
             {
                 var flagsEntity = _world.NewEntity();
@@ -84,9 +114,6 @@ namespace Systems
                     break;
                 }   
             }
-            
-            var mainCamera = MoveCameraToInitialPosition(startNewGameEvent.GridSize);
-            FillField(startNewGameEvent.GridSize, startNewGameEvent.MinesCount, mainCamera);
         }
 
         private void FillField(int gridSize, int minesCountNewValue, UnityEngine.Camera camera)

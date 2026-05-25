@@ -52,6 +52,7 @@ namespace Bootstrap
                 .Add(new CellClickHandleSystem())
                 .Add(new CalculateMinesSystem())
                 .Add(new UpdateFlagsCountSystem())
+                .Add(new UpdateTimerSystem())
                 .Add(new WindowStateChangeSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())

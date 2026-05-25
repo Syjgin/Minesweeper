@@ -11,6 +11,7 @@ namespace Systems.UI
         private EcsFilter _paramsFilter;
         private EcsPool<SavedParamsComponent> _paramsPool;
         private EcsFilter _gameStartedFilter;
+        private EcsPool<GameStartedComponent> _gameStartedPool;
 
         public override void Init(IEcsSystems systems)
         {
@@ -18,6 +19,7 @@ namespace Systems.UI
             _paramsFilter = World.Filter<SavedParamsComponent>().End();
             _paramsPool = World.GetPool<SavedParamsComponent>();
             _gameStartedFilter = World.Filter<GameStartedComponent>().End();
+            _gameStartedPool = World.GetPool<GameStartedComponent>();
         }
 
         protected override PrefabType GetPrefabType() => PrefabType.PauseWindow;
@@ -51,6 +53,8 @@ namespace Systems.UI
         private void OnHideClick()
         {
             EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(WindowType.Pause, false);
+            var entity = World.NewEntity();
+            _gameStartedPool.Add(entity);
         }
 
         private void OnRestartClick()

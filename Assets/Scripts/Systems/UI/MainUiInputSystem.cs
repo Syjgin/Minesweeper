@@ -15,17 +15,20 @@ namespace Systems.UI
         private EcsFilter _uiFilter;
         private EventsBus _eventsBus;
         private EcsFilter _paramsFilter;
-        private EcsPool<SavedParamsComponent>  _paramsPool; 
+        private EcsPool<SavedParamsComponent>  _paramsPool;
+        private EcsFilter _gameStartedFilter;
+        private EcsWorld _ecsWorld;
         
         public void Init(IEcsSystems systems)
         {
-            var ecsWorld = systems.GetWorld();
-            _uiFilter = ecsWorld.Filter<MainUiComponent>().End();
+            _ecsWorld = systems.GetWorld();
+            _uiFilter = _ecsWorld.Filter<MainUiComponent>().End();
             var sharedData = systems.GetShared<SharedData>();
             var poolSet = sharedData.PoolSet;
             _eventsBus = sharedData.EventsBus;
-            _paramsPool = ecsWorld.GetPool<SavedParamsComponent>();
-            _paramsFilter = ecsWorld.Filter<SavedParamsComponent>().End();
+            _paramsPool = _ecsWorld.GetPool<SavedParamsComponent>();
+            _paramsFilter = _ecsWorld.Filter<SavedParamsComponent>().End();
+            _gameStartedFilter = _ecsWorld.Filter<GameStartedComponent>().End();
             
             if(!poolSet.TryGetPool(PrefabType.MainUi, out _objectPool))
                 return;
@@ -47,6 +50,10 @@ namespace Systems.UI
         {
             _eventsBus.NewEvent<WindowStateChangeRequest>() =
                 new WindowStateChangeRequest(WindowType.Pause, true);
+            foreach (var entity in _gameStartedFilter)
+            {
+                _ecsWorld.DelEntity(entity);
+            }
         }
 
         public void Destroy(IEcsSystems systems)
