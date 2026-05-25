@@ -43,7 +43,7 @@ namespace Systems.Cells
                         view.BackgroundImage.sprite = view.FlagSprite;
                         break;
                     case CellVisual.Opened:
-                        view.MinesNearCountText.text = cellVisual.NearMinesCount.ToString();
+                        view.MinesNearCountText.text = cellVisual.NearMinesCount > 0 ? cellVisual.NearMinesCount.ToString() : "";
                         view.BackgroundImage.sprite = view.OpenedSprite;
                         break;
                     case CellVisual.Mine:

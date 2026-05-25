@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using Bootstrap;
 using Components;
 using Events;
 using Leopotam.EcsLite;
 using SevenBoldPencil.EasyEvents;
+using UnityEngine;
+using UnityEngine.Pool;
 using View;
 
 namespace Systems.Cells
@@ -19,6 +22,8 @@ namespace Systems.Cells
         protected EcsFilter GameStartedFilter;
         protected EcsPool<GameStartedComponent> GameStartedPool;
         protected EcsPool<CalculateMinesComponent> CalculateMinesPool;
+        protected EcsFilter SavedParamsFilter;
+        protected EcsPool<SavedParamsComponent> SavedParamsPool;
         
         public virtual void Init(IEcsSystems systems)
         {
@@ -33,6 +38,8 @@ namespace Systems.Cells
             GameStartedFilter = World.Filter<GameStartedComponent>().End();
             GameStartedPool = World.GetPool<GameStartedComponent>();
             CalculateMinesPool = World.GetPool<CalculateMinesComponent>();
+            SavedParamsFilter = World.Filter<SavedParamsComponent>().End();
+            SavedParamsPool = World.GetPool<SavedParamsComponent>();
         }
         
         protected void HandleOrdinalClick(MouseClickData clickData)
@@ -51,28 +58,46 @@ namespace Systems.Cells
                     DirtyPool.Add(entity);
                     break;
                 }
-    
             }
             else
             {
+                var coordinatesCache = DictionaryPool<Vector2Int, int>.Get();
+                var neighbourCoordinates = HashSetPool<Vector2Int>.Get();
+                
+                var gridSize = 0;
+                foreach (var entity in SavedParamsFilter)
+                {
+                    ref var savedParams = ref SavedParamsPool.Get(entity);
+                    gridSize = savedParams.GridSize;
+                    break;
+                }
+                
                 foreach (var entity in CellsFilter)
                 {
                     ref var cell = ref CoordsPool.Get(entity);
+                    coordinatesCache[cell.Coordinates] = entity;
                     if (cell.Coordinates.x == clickData.Position.x && cell.Coordinates.y == clickData.Position.y)
                     {
                         ref var state = ref StatesPool.Get(entity);
                         if (MinesPool.Has(entity))
                         {
                             state.UpdateVisual(CellVisual.Mine);
-                            wasGameOver = true;    
+                            wasGameOver = true;
+                            DirtyPool.Add(entity); 
+                            break;
                         }
-                        else
-                        {
-                            state.UpdateVisual(CellVisual.Opened);
-                        }
-                        DirtyPool.Add(entity);   
+
+                        state.UpdateVisual(CellVisual.Opened);
+                        DirtyPool.Add(entity);
                     }
-                }   
+                }
+
+                if (!wasGameOver)
+                {
+                    OpenAllNonMineNeighbors(clickData.Position, gridSize, coordinatesCache);
+                }
+                DictionaryPool<Vector2Int, int>.Release(coordinatesCache);
+                HashSetPool<Vector2Int>.Release(neighbourCoordinates);
             }
 
             if (!wasGameOver) 
@@ -83,6 +108,24 @@ namespace Systems.Cells
             }
             EventsBus.NewEvent<WindowStateChangeRequest>() =
                 new WindowStateChangeRequest(WindowType.GameOver, true);
+        }
+        
+        private void OpenAllNonMineNeighbors(Vector2Int coordinates, int gridSize, Dictionary<Vector2Int, int> entitiesByCoordinates)
+        {
+            var neighbourCoordinates = CoordinateUtils.FillNeighbourCoordinates(coordinates, gridSize);
+            foreach (var coordinate in neighbourCoordinates)
+            {
+                var cellEntity = entitiesByCoordinates[coordinate];
+                if (MinesPool.Has(cellEntity)) 
+                    continue;
+                ref var state = ref StatesPool.Get(cellEntity);
+                if(state.Visual == CellVisual.Opened)
+                    continue;
+                state.UpdateVisual(CellVisual.Opened);
+                DirtyPool.Add(cellEntity);
+                if(state.NearMinesCount == 0)
+                    OpenAllNonMineNeighbors(coordinate, gridSize, entitiesByCoordinates);
+            }
         }
     }
 }

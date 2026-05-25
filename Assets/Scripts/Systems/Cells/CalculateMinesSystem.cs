@@ -9,15 +9,11 @@ namespace Systems.Cells
     public class CalculateMinesSystem : BaseCellClickSystem, IEcsRunSystem
     {
         private EcsFilter _calculateMinesFilter;
-        private EcsFilter _savedParamsFilter;
-        private EcsPool<SavedParamsComponent> _savedParamsPool;
         
         public override void Init(IEcsSystems systems)
         {
             base.Init(systems);
             _calculateMinesFilter = World.Filter<CalculateMinesComponent>().End();
-            _savedParamsFilter = World.Filter<SavedParamsComponent>().End();
-            _savedParamsPool = World.GetPool<SavedParamsComponent>();
         }
 
         public void Run(IEcsSystems systems)
@@ -38,12 +34,13 @@ namespace Systems.Cells
             var minePossibility = 0f;
             var remainMines = 0;
             var gridSize = 0;
-            foreach (var entity in _savedParamsFilter)
+            foreach (var entity in SavedParamsFilter)
             {
-                ref var savedParams = ref _savedParamsPool.Get(entity);
+                ref var savedParams = ref SavedParamsPool.Get(entity);
                 minePossibility = (float)savedParams.MinesCount / totalCells;
                 remainMines = savedParams.MinesCount;
                 gridSize = savedParams.GridSize;
+                break;
             }
 
             while (remainMines > 0)
