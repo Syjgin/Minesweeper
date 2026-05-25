@@ -29,6 +29,8 @@ namespace Systems.UI
             {
                 WindowType.NewGame => PrefabType.NewGameWindow,
                 WindowType.Pause => PrefabType.PauseWindow,
+                WindowType.GameOver => PrefabType.GameOverWindow,
+                WindowType.Win => PrefabType.WinWindow,
                 _ => PrefabType.None
             };
         }
@@ -39,6 +41,8 @@ namespace Systems.UI
             {
                 PrefabType.NewGameWindow => WindowType.NewGame,
                 PrefabType.PauseWindow => WindowType.Pause,
+                PrefabType.GameOverWindow => WindowType.GameOver,
+                PrefabType.WinWindow => WindowType.Win,
                 _ => WindowType.None
             };
         }

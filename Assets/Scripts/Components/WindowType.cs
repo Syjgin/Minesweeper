@@ -4,6 +4,8 @@ namespace Components
     {
         None,
         NewGame,
-        Pause
+        Pause,
+        GameOver,
+        Win
     }
 }

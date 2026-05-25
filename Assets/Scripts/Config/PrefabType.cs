@@ -12,6 +12,8 @@ namespace Config
         MainUi = 3,
         PauseWindow = 4,
         Field = 5,
-        Camera = 6
+        Camera = 6,
+        GameOverWindow = 7,
+        WinWindow = 8,
     }
 }
