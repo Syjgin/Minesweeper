@@ -27,7 +27,8 @@ namespace Systems
         private EcsFilter _currentGameCharacteristicsFilter;
         private SharedData _sharedData;
         private EcsFilter _gameStartedFilter;
-        private EcsPool<GameStartedComponent> _gameStartedPool;
+        private EcsPool<FreeFlagsComponent> _flagsPool;
+        private EcsFilter _flagsFilter;
         
         public void Init(IEcsSystems systems)
         {
@@ -46,7 +47,8 @@ namespace Systems
             _ecsCharacteristicPool = _world.GetPool<SavedParamsComponent>();
             _ecsCellVisualStatePool = _world.GetPool<CellVisualStateComponent>();
             _gameStartedFilter = _world.Filter<GameStartedComponent>().End();
-            _gameStartedPool = _world.GetPool<GameStartedComponent>();
+            _flagsPool = _world.GetPool<FreeFlagsComponent>();
+            _flagsFilter = _world.Filter<FreeFlagsComponent>().End();
         }
 
         public void Run(IEcsSystems systems)
@@ -63,7 +65,26 @@ namespace Systems
             {
                 ref var characteristics = ref _ecsCharacteristicPool.Get(entity);
                 characteristics.Init(startNewGameEvent.GridSize, startNewGameEvent.MinesCount);
+                break;
             }
+
+            if (_flagsFilter.GetEntitiesCount() == 0)
+            {
+                var flagsEntity = _world.NewEntity();
+                _flagsPool.Add(flagsEntity).SetAmount(startNewGameEvent.MinesCount);
+                _dirtyPool.Add(flagsEntity);
+            }
+            else
+            {
+                foreach (var entity in _flagsFilter)
+                {
+                    ref var flagsAmount = ref _flagsPool.Get(entity);
+                    flagsAmount.SetAmount(startNewGameEvent.MinesCount);
+                    _dirtyPool.Add(entity);
+                    break;
+                }   
+            }
+            
             var mainCamera = MoveCameraToInitialPosition(startNewGameEvent.GridSize);
             FillField(startNewGameEvent.GridSize, startNewGameEvent.MinesCount, mainCamera);
         }

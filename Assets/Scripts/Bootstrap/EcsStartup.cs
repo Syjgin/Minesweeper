@@ -51,6 +51,7 @@ namespace Bootstrap
                 .Add(new GameOverWindowInputSystem())
                 .Add(new CellClickHandleSystem())
                 .Add(new CalculateMinesSystem())
+                .Add(new UpdateFlagsCountSystem())
                 .Add(new WindowStateChangeSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
