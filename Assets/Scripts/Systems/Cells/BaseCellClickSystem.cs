@@ -199,7 +199,7 @@ namespace Systems.Cells
             Dictionary<Vector2Int, int> entitiesByCoordinates)
         {
             Span<Vector2Int> localSnapshot = stackalloc Vector2Int[8];
-            var count = CoordinateUtils.FillNeighbourCoordinatesToArrayToSpan(coordinates, localSnapshot, gridSize);
+            var count = CoordinateUtils.FillNeighbourCoordinates(coordinates, localSnapshot, gridSize);
 
             foreach (var coordinate in localSnapshot[..count])
             {

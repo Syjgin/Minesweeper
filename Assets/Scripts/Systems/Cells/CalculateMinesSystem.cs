@@ -1,8 +1,10 @@
+using System;
 using Components;
 using Events;
 using Leopotam.EcsLite;
 using UnityEngine;
 using UnityEngine.Pool;
+using Random = UnityEngine.Random;
 
 namespace Systems.Cells
 {
@@ -29,7 +31,6 @@ namespace Systems.Cells
         private void PlaceMines()
         {
             var mineNeighboursDictionary = DictionaryPool<Vector2Int, int>.Get();
-            var neighbourCoordinates = HashSetPool<Vector2Int>.Get();
             var totalCells = _calculateMinesFilter.GetEntitiesCount() + 1;
             var minePossibility = 0f;
             var remainMines = 0;
@@ -43,6 +44,7 @@ namespace Systems.Cells
                 break;
             }
 
+            Span<Vector2Int> localSnapshot = stackalloc Vector2Int[8];
             while (remainMines > 0)
             {
                 foreach (var entity in _calculateMinesFilter)
@@ -58,12 +60,12 @@ namespace Systems.Cells
                         continue;
                     MinesPool.Add(entity);
                     ref var coords = ref CoordsPool.Get(entity);
-                    CoordinateUtils.FillNeighbourCoordinates(coords.Coordinates, neighbourCoordinates, gridSize);
-                    foreach (var neighbourCoordinate in neighbourCoordinates)
+                    var count = CoordinateUtils.FillNeighbourCoordinates(coords.Coordinates, localSnapshot, gridSize);
+                    foreach (var coordinate in localSnapshot[..count])
                     {
-                        if (!mineNeighboursDictionary.TryAdd(neighbourCoordinate, 1))
+                        if (!mineNeighboursDictionary.TryAdd(coordinate, 1))
                         {
-                            mineNeighboursDictionary[neighbourCoordinate]++;
+                            mineNeighboursDictionary[coordinate]++;
                         }
                     }
                     remainMines--;
@@ -81,7 +83,6 @@ namespace Systems.Cells
             }
             
             DictionaryPool<Vector2Int, int>.Release(mineNeighboursDictionary);
-            HashSetPool<Vector2Int>.Release(neighbourCoordinates);
             foreach (var entity in _calculateMinesFilter)
             {
                 CalculateMinesPool.Del(entity);

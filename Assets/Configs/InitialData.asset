@@ -15,6 +15,6 @@ MonoBehaviour:
   <GridSize>k__BackingField: 8
   <MaxGridSize>k__BackingField: 50
   <MinGridSize>k__BackingField: 5
-  <MinesCount>k__BackingField: 10
+  <MinesCount>k__BackingField: 20
   <ScrollWheelSensibility>k__BackingField: 0.1
   <DragSensibility>k__BackingField: 0.02
