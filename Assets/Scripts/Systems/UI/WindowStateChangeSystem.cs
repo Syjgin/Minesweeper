@@ -15,15 +15,18 @@ namespace Systems.UI
         private PoolSet _poolSet;
         private EcsFilter _windowFilter;
         private EcsPool<WindowComponent> _windowPool;
+        private EcsFilter _gameStartedFilter;
+        private EcsWorld _world;
         
         public void Init(IEcsSystems systems)
         {
             _sharedData = systems.GetShared<SharedData>();
             _eventsBus = _sharedData.EventsBus;
             _poolSet = _sharedData.PoolSet;
-            var world = systems.GetWorld();
-            _windowFilter = world.Filter<WindowComponent>().End();
-            _windowPool = world.GetPool<WindowComponent>();
+            _world = systems.GetWorld();
+            _windowFilter = _world.Filter<WindowComponent>().End();
+            _windowPool = _world.GetPool<WindowComponent>();
+            _gameStartedFilter = _world.Filter<GameStartedComponent>().End();
         }
 
         public void Run(IEcsSystems systems)
@@ -48,6 +51,7 @@ namespace Systems.UI
                     continue;
                 windowComponent.SetOpened(eventBody.IsOpen);
                 BaseWindow targetWindow = null;
+                var wasGameEnded = false;
                 switch (eventBody.WindowType)
                 {
                     case WindowType.NewGame:
@@ -63,11 +67,13 @@ namespace Systems.UI
                     case WindowType.GameOver:
                     {
                         targetWindow = TryGetWindow<GameOverWindow>(entity);
+                        wasGameEnded = windowComponent.IsOpen;
                     }
                         break;
                     case WindowType.Win:
                     {
                         targetWindow = TryGetWindow<WinWindow>(entity);
+                        wasGameEnded = windowComponent.IsOpen;
                     }
                         break;
                     default:
@@ -83,6 +89,16 @@ namespace Systems.UI
                 {
                     targetWindow.Hide();
                 }
+                if(wasGameEnded)
+                    FinishGame();
+            }
+        }
+
+        private void FinishGame()
+        {
+            foreach (var entity in _gameStartedFilter)
+            {
+                _world.DelEntity(entity);
             }
         }
 

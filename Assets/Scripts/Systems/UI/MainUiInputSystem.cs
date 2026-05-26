@@ -42,11 +42,17 @@ namespace Systems.UI
 
         private void OnRestartClick()
         {
+            _eventsBus.NewEvent<WindowStateChangeRequest>() =
+                new WindowStateChangeRequest(WindowType.Win, false);
+            _eventsBus.NewEvent<WindowStateChangeRequest>() =
+                new WindowStateChangeRequest(WindowType.GameOver, false);
             RestartUtils.RestartCurrentGame(_paramsFilter, _paramsPool, _eventsBus);
         }
 
         private void OnPauseClick()
         {
+            if(_gameStartedFilter.GetEntitiesCount() == 0)
+                return;
             _eventsBus.NewEvent<WindowStateChangeRequest>() =
                 new WindowStateChangeRequest(WindowType.Pause, true);
             foreach (var entity in _gameStartedFilter)

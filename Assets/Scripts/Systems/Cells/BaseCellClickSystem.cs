@@ -53,6 +53,8 @@ namespace Systems.Cells
 
         protected void HandleOrdinalClick(MouseClickData clickData)
         {
+            if(GameStartedFilter.GetEntitiesCount() == 0)
+                return;
             var wasGameOver = false;
             var isFlagMode = !clickData.IsLeftButton;
             if (isFlagMode)
