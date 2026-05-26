@@ -28,7 +28,7 @@ namespace Systems.Camera
             foreach (var entity in _cameraFilter)
             {
                 ref var cameraComponent = ref _ecsCameraPool.Get(entity);
-                if (!_poolSet.TryGetPool<MainCamera>(PrefabType.Camera, out var cameraPool))
+                if (!_poolSet.TryGetPool<MainCamera>(out var cameraPool))
                     return;
                 if(!cameraPool.TryGetObjectByEntity(entity, out var cameraObject))
                     return;

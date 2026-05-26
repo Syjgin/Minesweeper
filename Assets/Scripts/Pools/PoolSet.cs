@@ -1,21 +1,21 @@
+using System;
 using System.Collections.Generic;
-using Config;
 using UnityEngine;
 
 namespace Pools
 {
     public class PoolSet
     {
-        private readonly Dictionary<PrefabType, IPool> _pools = new();
+        private readonly Dictionary<Type, IPool> _pools = new();
 
         public void RegisterPool(IPool pool)
         {
-            _pools[pool.PrefabType] = pool;
+            _pools[pool.ComponentType] = pool;
         }
         
-        public bool TryGetPool<T>(PrefabType prefabType, out ObjectPool<T> pool) where T : Behaviour
+        public bool TryGetPool<T>(out ObjectPool<T> pool) where T : Behaviour
         {
-            if (!_pools.TryGetValue(prefabType, out IPool poolInstance))
+            if (!_pools.TryGetValue(typeof(T), out IPool poolInstance))
             {
                 pool = null;
                 return false;

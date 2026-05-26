@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Events;
 using Leopotam.EcsLite;
 using Pools;
@@ -22,7 +21,7 @@ namespace Systems.UI
             _readOnlySettings = sharedData.ReadOnlySettings;
         }
 
-        protected override PrefabType GetPrefabType() => PrefabType.NewGameWindow;
+        protected override WindowType WindowType => Components.WindowType.NewGame;
 
         protected override void Subscribe()
         {
@@ -47,7 +46,7 @@ namespace Systems.UI
             var minesCount = NormalizeMinesCount(windowObject.MinesCountInput.text, gridSize);
             EventsBus.NewEventSingleton<StartNewGameEvent>() = new StartNewGameEvent(gridSize, minesCount);
             EventsBus.NewEvent<WindowStateChangeRequest>() =
-                new WindowStateChangeRequest(WindowType.NewGame, false);
+                new WindowStateChangeRequest(Components.WindowType.NewGame, false);
         }
 
         private int NormalizeGridSize(string value)

@@ -71,14 +71,14 @@ namespace Bootstrap
         {
             var poolSet = new PoolSet();
 
-            poolSet.RegisterPool(new ObjectPool<CellView>(_prefabLocator, PrefabType.Cell, 512));
-            poolSet.RegisterPool(new ObjectPool<NewGameWindow>(_prefabLocator, PrefabType.NewGameWindow, 1, _uiRoot.transform));
-            poolSet.RegisterPool(new ObjectPool<PauseWindow>(_prefabLocator, PrefabType.PauseWindow, 1, _uiRoot.transform));
-            poolSet.RegisterPool(new ObjectPool<GameOverWindow>(_prefabLocator, PrefabType.GameOverWindow, 1, _uiRoot.transform));
-            poolSet.RegisterPool(new ObjectPool<WinWindow>(_prefabLocator, PrefabType.WinWindow, 1, _uiRoot.transform));
-            poolSet.RegisterPool(new ObjectPool<MainUi>(_prefabLocator, PrefabType.MainUi, 1, _uiRoot.transform));
-            poolSet.RegisterPool(new ObjectPool<FieldView>(_prefabLocator, PrefabType.Field, 1));
-            poolSet.RegisterPool(new ObjectPool<MainCamera>(_prefabLocator, PrefabType.Camera, 1));
+            poolSet.RegisterPool(new ObjectPool<CellView>(_prefabLocator, 512));
+            poolSet.RegisterPool(new ObjectPool<NewGameWindow>(_prefabLocator, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<PauseWindow>(_prefabLocator, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<GameOverWindow>(_prefabLocator, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<WinWindow>(_prefabLocator, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<MainUi>(_prefabLocator, 1, _uiRoot.transform));
+            poolSet.RegisterPool(new ObjectPool<FieldView>(_prefabLocator, 1));
+            poolSet.RegisterPool(new ObjectPool<MainCamera>(_prefabLocator, 1));
             return poolSet;
         }
 

@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Leopotam.EcsLite;
 using Pools;
 using SevenBoldPencil.EasyEvents;
@@ -34,11 +33,11 @@ namespace Systems.UI
 
         protected abstract void Subscribe();
         protected abstract void Unsubscribe();
-        protected abstract PrefabType GetPrefabType();
+        protected abstract WindowType WindowType { get; }
 
         protected TWindow GetWindow()
         {
-            return WindowUtils.GetWindow<TWindow>(PoolSet, GetPrefabType(), WindowFilter, WindowPool);
+            return WindowUtils.GetWindow<TWindow>(PoolSet, WindowType, WindowFilter, WindowPool);
         }
     }
 }

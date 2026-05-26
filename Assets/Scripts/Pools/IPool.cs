@@ -1,10 +1,9 @@
-using Config;
-using UnityEngine;
+using System;
 
 namespace Pools
 {
     public interface IPool
     {
-        PrefabType PrefabType { get; }
+        Type ComponentType { get; }
     }
 }

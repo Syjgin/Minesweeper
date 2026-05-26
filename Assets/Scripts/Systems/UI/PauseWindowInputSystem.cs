@@ -1,5 +1,4 @@
 using Components;
-using Config;
 using Events;
 using Leopotam.EcsLite;
 using UI;
@@ -22,7 +21,7 @@ namespace Systems.UI
             _gameStartedPool = World.GetPool<GameStartedComponent>();
         }
 
-        protected override PrefabType GetPrefabType() => PrefabType.PauseWindow;
+        protected override WindowType WindowType => Components.WindowType.Pause;
 
         protected override void Subscribe()
         {
@@ -42,8 +41,8 @@ namespace Systems.UI
 
         private void OnExitClick()
         {
-            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(WindowType.Pause, false);
-            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(WindowType.NewGame, true);
+            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(Components.WindowType.Pause, false);
+            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(Components.WindowType.NewGame, true);
             foreach (var entity in _gameStartedFilter)
             {
                 World.DelEntity(entity);
@@ -52,14 +51,14 @@ namespace Systems.UI
 
         private void OnHideClick()
         {
-            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(WindowType.Pause, false);
+            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(Components.WindowType.Pause, false);
             var entity = World.NewEntity();
             _gameStartedPool.Add(entity);
         }
 
         private void OnRestartClick()
         {
-            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(WindowType.Pause, false);
+            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(Components.WindowType.Pause, false);
             RestartUtils.RestartCurrentGame(_paramsFilter, _paramsPool, EventsBus);
         }
     }

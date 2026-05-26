@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Events;
 using Leopotam.EcsLite;
 using Pools;
@@ -48,28 +47,27 @@ namespace Systems.UI
                 if(windowComponent.IsOpen == eventBody.IsOpen)
                     continue;
                 windowComponent.SetOpened(eventBody.IsOpen);
-                var prefabType = WindowUtils.WindowTypeToPrefabType(eventBody.WindowType);
                 BaseWindow targetWindow = null;
-                switch (prefabType)
+                switch (eventBody.WindowType)
                 {
-                    case PrefabType.NewGameWindow:
+                    case WindowType.NewGame:
                     {
-                        targetWindow = TryGetWindow<NewGameWindow>(PrefabType.NewGameWindow, entity);
+                        targetWindow = TryGetWindow<NewGameWindow>(entity);
                     }
                         break;
-                    case PrefabType.PauseWindow:
+                    case WindowType.Pause:
                     {
-                        targetWindow = TryGetWindow<PauseWindow>(PrefabType.PauseWindow, entity);
+                        targetWindow = TryGetWindow<PauseWindow>(entity);
                     }
                         break;
-                    case PrefabType.GameOverWindow:
+                    case WindowType.GameOver:
                     {
-                        targetWindow = TryGetWindow<GameOverWindow>(PrefabType.GameOverWindow, entity);
+                        targetWindow = TryGetWindow<GameOverWindow>(entity);
                     }
                         break;
-                    case PrefabType.WinWindow:
+                    case WindowType.Win:
                     {
-                        targetWindow = TryGetWindow<WinWindow>(PrefabType.WinWindow, entity);
+                        targetWindow = TryGetWindow<WinWindow>(entity);
                     }
                         break;
                     default:
@@ -88,9 +86,9 @@ namespace Systems.UI
             }
         }
 
-        private T TryGetWindow<T>(PrefabType prefabType, int entity) where T : BaseWindow
+        private T TryGetWindow<T>(int entity) where T : BaseWindow
         {
-            _poolSet.TryGetPool<T>(prefabType, out var pool);
+            _poolSet.TryGetPool<T>(out var pool);
             return pool.TryGetObjectByEntity(entity, out var rawWindow) ? rawWindow : null;
         }
     }

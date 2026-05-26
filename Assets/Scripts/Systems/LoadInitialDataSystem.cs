@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Events;
 using Leopotam.EcsLite;
 using Pools;
@@ -40,17 +39,17 @@ namespace Systems
 
         private void CreateGameOverWindow()
         {
-            CreateWindow<GameOverWindow>(PrefabType.GameOverWindow, WindowType.GameOver);
+            CreateWindow<GameOverWindow>(WindowType.GameOver);
         }
 
         private void CreateWinWindow()
         {
-            CreateWindow<WinWindow>(PrefabType.WinWindow, WindowType.Win);
+            CreateWindow<WinWindow>(WindowType.Win);
         }
 
         private void CreateCamera()
         {
-            if (!_poolSet.TryGetPool<MainCamera>(PrefabType.Camera, out var cameraPool))
+            if (!_poolSet.TryGetPool<MainCamera>(out var cameraPool))
                 return;
             var cameraEntity = _world.NewEntity();
             _ecsCameraPool.Add(cameraEntity);
@@ -60,21 +59,21 @@ namespace Systems
 
         private void CreateNewGameWindow()
         {
-            var window = CreateWindow<NewGameWindow>(PrefabType.NewGameWindow, WindowType.NewGame);
+            var window = CreateWindow<NewGameWindow>(WindowType.NewGame);
             window.LevelSizeInput.text = _sharedData.InitialData.GridSize.ToString();
             window.MinesCountInput.text = _sharedData.InitialData.MinesCount.ToString();
         }
 
         private void CreatePauseWindow()
         {
-            CreateWindow<PauseWindow>(PrefabType.PauseWindow, WindowType.Pause);
+            CreateWindow<PauseWindow>(WindowType.Pause);
         }
 
-        private T CreateWindow<T>(PrefabType prefabType, WindowType windowType) where T : BaseWindow
+        private T CreateWindow<T>(WindowType windowType) where T : BaseWindow
         {
             var window = _world.NewEntity();
             _ecsWindowPool.Add(window).SetWindowType(windowType);
-            return !_poolSet.TryGetPool<T>(prefabType, out var newGameWindowPool)
+            return !_poolSet.TryGetPool<T>(out var newGameWindowPool)
                 ? null
                 : newGameWindowPool.CreateObject(window);
         }
@@ -82,7 +81,7 @@ namespace Systems
         private void CreateMainUI()
         {
             var mainUiEntity = _world.NewEntity();
-            if (!_poolSet.TryGetPool<MainUi>(PrefabType.MainUi, out var mainUiPool))
+            if (!_poolSet.TryGetPool<MainUi>(out var mainUiPool))
                 return;
             _ecsMainUiPool.Add(mainUiEntity);
             mainUiPool.CreateObject(mainUiEntity);

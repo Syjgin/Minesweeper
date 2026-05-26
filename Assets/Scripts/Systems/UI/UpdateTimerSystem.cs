@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Leopotam.EcsLite;
 using Pools;
 using UI;
@@ -41,7 +40,7 @@ namespace Systems.UI
                 
                 if (timer.WholeSeconds != previousWholeSeconds)
                 {
-                    if (!_poolSet.TryGetPool<MainUi>(PrefabType.MainUi, out var mainUiPool))
+                    if (!_poolSet.TryGetPool<MainUi>(out var mainUiPool))
                         return;
                     
                     if (!mainUiPool.TryGetObjectByEntity(_mainUiFilter.GetRawEntities()[0], out var mainUi))

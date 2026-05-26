@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Events;
 using Leopotam.EcsLite;
 using Pools;
@@ -30,7 +29,7 @@ namespace Systems.UI
             _paramsFilter = _ecsWorld.Filter<SavedParamsComponent>().End();
             _gameStartedFilter = _ecsWorld.Filter<GameStartedComponent>().End();
             
-            if(!poolSet.TryGetPool(PrefabType.MainUi, out _objectPool))
+            if(!poolSet.TryGetPool(out _objectPool))
                 return;
             foreach (var entity in _uiFilter)
             {

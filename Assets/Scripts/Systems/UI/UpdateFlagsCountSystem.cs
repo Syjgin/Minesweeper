@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Leopotam.EcsLite;
 using Pools;
 using UI;
@@ -31,7 +30,7 @@ namespace Systems.UI
             {
                 ref var freeFlagsComponent = ref _flagsPool.Get(entity);
                 
-                if (!_poolSet.TryGetPool<MainUi>(PrefabType.MainUi, out var mainUiPool))
+                if (!_poolSet.TryGetPool<MainUi>(out var mainUiPool))
                     return;
                 
                 if (!mainUiPool.TryGetObjectByEntity(_mainUiFilter.GetRawEntities()[0], out var mainUi))

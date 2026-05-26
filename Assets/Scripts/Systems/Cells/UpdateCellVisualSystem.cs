@@ -1,6 +1,5 @@
 using Bootstrap;
 using Components;
-using Config;
 using Leopotam.EcsLite;
 using Pools;
 using View;
@@ -25,7 +24,7 @@ namespace Systems.Cells
 
         public void Run(IEcsSystems systems)
         {
-            if(!_poolSet.TryGetPool<CellView>(PrefabType.Cell, out var objectPool))
+            if(!_poolSet.TryGetPool<CellView>(out var objectPool))
                 return;
             foreach (var entity in _cellsFilter)
             {

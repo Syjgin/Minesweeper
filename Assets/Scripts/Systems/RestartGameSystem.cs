@@ -89,7 +89,7 @@ namespace Systems
             }
             var timerEntity = _world.NewEntity();
             _timerPool.Add(timerEntity);
-            if (!_poolSet.TryGetPool<MainUi>(PrefabType.MainUi, out var mainUiPool))
+            if (!_poolSet.TryGetPool<MainUi>(out var mainUiPool))
                 return;
             if (!mainUiPool.TryGetObjectByEntity(_mainUiFilter.GetRawEntities()[0], out var mainUi))
                 return;
@@ -118,9 +118,9 @@ namespace Systems
 
         private void FillField(int gridSize, int minesCountNewValue, UnityEngine.Camera camera)
         {
-            if(!_poolSet.TryGetPool<FieldView>(PrefabType.Field, out var fieldObjectPool))
+            if(!_poolSet.TryGetPool<FieldView>(out var fieldObjectPool))
                 return;
-            if(!_poolSet.TryGetPool<CellView>(PrefabType.Cell, out var cellViewObjectPool))
+            if(!_poolSet.TryGetPool<CellView>(out var cellViewObjectPool))
                 return;
             foreach (var entity in _gameStartedFilter)
             {
@@ -183,7 +183,7 @@ namespace Systems
                 ref var camera = ref _ecsCameraPool.Get(entity);
                 camera.Init(Vector2.zero, orthoSize);
                 _dirtyPool.Add(entity);
-                if (_poolSet.TryGetPool<MainCamera>(PrefabType.Camera, out var cameraObjectPool) &&
+                if (_poolSet.TryGetPool<MainCamera>(out var cameraObjectPool) &&
                     cameraObjectPool.TryGetObjectByEntity(entity, out var cameraObject))
                 {
                     return cameraObject.Camera;

@@ -12,6 +12,8 @@ namespace Systems.UI
         protected EcsFilter GameStartedFilter;
         protected abstract WindowType CurrentWindowType { get; }
 
+        protected override WindowType WindowType => CurrentWindowType;
+
         public override void Init(IEcsSystems systems)
         {
             base.Init(systems);
@@ -43,7 +45,7 @@ namespace Systems.UI
         protected virtual void OnExitClick()
         {
             EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(CurrentWindowType, false);
-            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(WindowType.NewGame, true);
+            EventsBus.NewEvent<WindowStateChangeRequest>() = new WindowStateChangeRequest(Components.WindowType.NewGame, true);
             foreach (var entity in GameStartedFilter)
             {
                 World.DelEntity(entity);

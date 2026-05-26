@@ -1,22 +1,23 @@
+using System;
 using System.Collections.Generic;
 using Config;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Pools
 {
     public class ObjectPool<T> : IPool  where T : Behaviour 
     {
-        public PrefabType PrefabType { get; }
+        public Type ComponentType => typeof(T);
         private readonly GameObject _prefab;
         private readonly Dictionary<int, T> _activeObjects;
         private readonly Dictionary<int, int> _activeEntities;
         private readonly UnityEngine.Pool.ObjectPool<T> _pool;
         private readonly Transform _parent;
 
-        public ObjectPool(PrefabLocator locator, PrefabType type, int initialSize = 10, Transform parent = null)
+        public ObjectPool(PrefabLocator locator, int initialSize = 10, Transform parent = null)
         {
-            PrefabType = type;
-            _prefab = locator.GetPrefabByType(PrefabType);
+            _prefab = locator.GetPrefabByType(typeof(T));
             _parent = parent;
             _pool = new UnityEngine.Pool.ObjectPool<T>(CreateObject, OnGetObject, OnReleaseObject, OnDestroyObject, true, initialSize);
             _activeObjects = new Dictionary<int, T>();
